@@ -22,14 +22,20 @@ public class Client
                 String filename = "";
                 String oldname = "";
                 String newname = "";
-
+                int page_num = 0;
+                String ip = "";
+                int port = 0;
+                
                 switch(input){
                     case "join":
+                        System.out.print("Type in the IP address: ");
                         if(in.hasNextLine()) {
-                            String ip = in.nextLine();
+                            ip = in.nextLine();
                         }
-                        if(in.hasNextInt(){
-                            int port = in.nextLine();
+                        
+                        System.out.print("Type in the port: ");
+                        if(in.hasNextInt()){
+                            port = in.nextInt();
                         }
                         dfs.join(ip, port);
                         break;
@@ -37,40 +43,51 @@ public class Client
                         dfs.ls();
                         break;
                     case "touch":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
                         dfs.touch(filename);
                         break;
                     case "delete":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
                         dfs.delete(filename);
                         break;
                     case "read":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
-                        dfs.read(filename);
+                        System.out.print("Type in the page number: ");
+                        if(in.hasNextInt()){
+                            pagenum = in.nextInt();
+                        }
+                        dfs.read(filename, page_num);
                         break;
                     case "tail":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
                         dfs.tail(filename);
                         break;
                     case "head":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
                         dfs.head(filename);
                         break;
                     case "append":
+                        System.out.print("Type in the file name: ");
                         if(in.hasNextLine()){
                             filename = in.nextLine();
                         }
-                        Byte[] data;
+                        //add size
+                        Byte[] data = new Byte[10];
                         dfs.append(filename, data);
                         break;
                     case "move":
