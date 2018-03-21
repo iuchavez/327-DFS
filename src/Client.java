@@ -12,7 +12,7 @@ public class Client
     DFS dfs;
     public Client(int p) throws Exception {
         dfs = new DFS(p);
-        
+
         Scanner in = new Scanner(System.in);
         String input = "";
 
@@ -29,10 +29,10 @@ public class Client
                             String ip = in.nextLine();
                         }
                         if(in.hasNextInt(){
-                            int port = in.nextLine();
-                        }
-                        dfs.join(ip, port);
-                        break;
+                        int port = in.nextLine();
+                    }
+                    dfs.join(ip, port);
+                    break;
                     case "ls":
                         dfs.ls();
                         break;
@@ -98,13 +98,13 @@ public class Client
 
         System.out.println("Exit Client.");
     }
-    
+
     static public void main(String args[]) throws Exception
     {
         if (args.length < 1 ) {
             throw new IllegalArgumentException("Parameter: <port>");
         }
         Client client=new Client( Integer.parseInt(args[0]));
-        
-     } 
+
+    }
 }
