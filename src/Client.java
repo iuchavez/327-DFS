@@ -13,9 +13,10 @@ public class Client
 
     public Client(int p) throws Exception {
     dfs = new DFS(p);
-        
+    int port = p;
+
         Scanner in = new Scanner(System.in);
-        int input = "";
+        int input = 0;
 
         while(input != 10){
 
@@ -32,22 +33,21 @@ public class Client
             System.out.println("------10. EXIT-------");
             System.out.print("Type in an option number: ");
 
-            if(input.hasNextInt()){
+            if(in.hasNextInt()){
                 input = in.nextInt();
                 String filename = "";
                 String oldname = "";
                 String newname = "";
                 int page_num = 0;
                 String ip = "";
-                int port = 0;
-                
+
                 switch(input){
                     case 1:
                         System.out.print("Type in the IP address: ");
                         if(in.hasNextLine()) {
                             ip = in.nextLine();
                         }
-                        
+                        //Port that is being connected to.
                         System.out.print("Type in the port: ");
                         if(in.hasNextInt()){
                             port = in.nextInt();

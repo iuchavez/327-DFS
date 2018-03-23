@@ -5,7 +5,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.math.BigInteger;
 import java.security.*;
-// import a json package
+//import com.google.gson.
 
 
 /* JSON Format
@@ -84,7 +84,8 @@ public class DFS
         chord.joinRing(Ip, port);
         chord.Print();
     }
-    
+
+
   /*  public JSonParser readMetaData() throws Exception
     {
         JsonParser jsonParser _ null;
@@ -93,16 +94,16 @@ public class DFS
         InputStream metadataraw = peer.get(guid);
         // jsonParser = Json.createParser(metadataraw);
         return jsonParser;
-    }
-    
-    public void writeMetaData(InputStream stream) throws Exception
-    {
-        JsonParser jsonParser _ null;
-        long guid = md5("Metadata");
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, stream);
-    }
-   */
+    }*/
+
+    /*public void writeMetaData(InputStream stream) throws Exception
+   {
+       JsonParser jsonParser _ null;
+       long guid = md5("Metadata");
+       ChordMessageInterface peer = chord.locateSuccessor(guid);
+       peer.put(guid, stream);
+   }
+  */
     public void mv(String oldName, String newName) throws Exception
     {
         // TODO:  Change the name in Metadata
