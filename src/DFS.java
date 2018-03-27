@@ -48,7 +48,7 @@ import java.security.*;
 public class DFS
 {
     int port;
-    Chord  chord;
+    //Chord  chord;
     
     private long md5(String objectName)
     {
@@ -62,27 +62,34 @@ public class DFS
         }
         catch(NoSuchAlgorithmException e)
         {
-                e.printStackTrace();
-                
+                e.printStackTrace(); 
         }
         return 0;
     }
-    
-    
     
     public DFS(int port) throws Exception
     {
         
         this.port = port;
         long guid = md5("" + port);
-        chord = new Chord(port, guid);
-        Files.createDirectories(Paths.get(guid+"/repository"));
+        //chord = new Chord(port, guid);
+        //Files.createDirectories(Paths.get(guid+"/repository"));
     }
     
-    public  void join(String Ip, int port) throws Exception
+    public void join(Scanner in) throws Exception
     {
-        chord.joinRing(Ip, port);
-        chord.Print();
+        System.out.print("Type in the IP address: ");
+        String ip = in.next();
+        
+        //Port that is being connected to.
+        if(!ip.equals(null)){
+            System.out.print("Type in the port: ");
+            int port = in.nextInt();
+        }
+
+        System.out.println("This is the join process");
+        //chord.joinRing(Ip, port);
+        //chord.Print();
     }
 
 
@@ -104,68 +111,127 @@ public class DFS
        peer.put(guid, stream);
    }
   */
-    public void mv(String oldName, String newName) throws Exception
+    public void mv(Scanner in) throws Exception
     {
+        String oldname = "";
+        String newname = "";
+        System.out.print("Type in the old name for the metadata: ");
+        if(in.hasNext()) {
+            oldname = in.next();
+        }
+
+        System.out.print("Type in the new name for the metadata: ");
+        if(in.hasNext()) {
+            newname = in.next();
+        }
+        System.out.println("This is the mv process");
         // TODO:  Change the name in Metadata
         // Write Metadata
     }
 
-    
-    public String ls() throws Exception
+    //String
+    public void ls() throws Exception
     {
-        String listOfFiles = "";
+        System.out.println("This is the ls process");
+        //String listOfFiles = "";
        // TODO: returns all the files in the Metadata
        // JsonParser jp = readMetaData();
-        return listOfFiles;
+       // return listOfFiles;
     }
-
-    
-    public void touch(String fileName) throws Exception
+ 
+    public void touch(Scanner in) throws Exception
     {
+        String filename = "";
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+
+        System.out.println("This is the touch process");
          // TODO: Create the file fileName by adding a new entry to the Metadata
         // Write Metadata
-
-        
-        
     }
-    public void delete(String fileName) throws Exception
+
+    public void delete(Scanner in) throws Exception
     {
+        String filename = "";
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+        System.out.println("This is the delete process");
         // TODO: remove all the pages in the entry fileName in the Metadata and then the entry
         // for each page in Metadata.filename
         //     peer = chord.locateSuccessor(page.guid);
         //     peer.delete(page.guid)
         // delete Metadata.filename
-        // Write Metadata
-
+        // Write Metadata 
+    }
+    
+    //Byte[]
+    public void read(Scanner in) throws Exception
+    {
+        String filename = "";
+        int pageNumber = 0;
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+        System.out.print("Type in the page number: ");
+        if(in.hasNextInt()){
+            pageNumber = in.nextInt();
+        }
+        System.out.println("This is the read process");
         
-    }
-    
-    public Byte[] read(String fileName, int pageNumber) throws Exception
-    {
         // TODO: read pageNumber from fileName
-        return null;
+        //return null;
     }
     
-    
-    public Byte[] tail(String fileName) throws Exception
+    //Byte[]
+    public void tail(Scanner in) throws Exception
     {
+        String filename = "";
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+        System.out.println("This is the tail process");
+        
         // TODO: return the last page of the fileName
-        return null;
+        //return null;
     }
-    public Byte[] head(String fileName) throws Exception
+
+    //Byte[]
+    public void head(Scanner in) throws Exception
     {
+        String filename = "";
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+        System.out.println("This is the head process");
+        
         // TODO: return the first page of the fileName
-        return null;
+        //return null;
     }
-    public void append(String filename, Byte[] data) throws Exception
+
+    public void append(Scanner in) throws Exception
     {
+        String filename = "";
+        System.out.print("Type in the file name: ");
+        if(in.hasNext()){
+            filename = in.next();
+        }
+        
+        //add size
+        Byte[] data = new Byte[10];
+        System.out.println("This is the append process");
+        
         // TODO: append data to fileName. If it is needed, add a new page.
         // Let guid be the last page in Metadata.filename
         //ChordMessageInterface peer = chord.locateSuccessor(guid);
         //peer.put(guid, data);
-        // Write Metadata
-
-        
+        // Write Metadata        
     }
     
 }
