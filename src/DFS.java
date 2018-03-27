@@ -87,7 +87,6 @@ public class DFS
             int port = in.nextInt();
         }
 
-        System.out.println("This is the join process");
         //chord.joinRing(Ip, port);
         //chord.Print();
     }
@@ -124,19 +123,16 @@ public class DFS
         if(in.hasNext()) {
             newname = in.next();
         }
-        System.out.println("This is the mv process");
         // TODO:  Change the name in Metadata
         // Write Metadata
     }
 
-    //String
-    public void ls() throws Exception
+    public String ls() throws Exception
     {
-        System.out.println("This is the ls process");
-        //String listOfFiles = "";
+        String listOfFiles = "";
        // TODO: returns all the files in the Metadata
        // JsonParser jp = readMetaData();
-       // return listOfFiles;
+        return listOfFiles;
     }
  
     public void touch(Scanner in) throws Exception
@@ -147,7 +143,6 @@ public class DFS
             filename = in.next();
         }
 
-        System.out.println("This is the touch process");
          // TODO: Create the file fileName by adding a new entry to the Metadata
         // Write Metadata
     }
@@ -159,7 +154,6 @@ public class DFS
         if(in.hasNext()){
             filename = in.next();
         }
-        System.out.println("This is the delete process");
         // TODO: remove all the pages in the entry fileName in the Metadata and then the entry
         // for each page in Metadata.filename
         //     peer = chord.locateSuccessor(page.guid);
@@ -168,8 +162,7 @@ public class DFS
         // Write Metadata 
     }
     
-    //Byte[]
-    public void read(Scanner in) throws Exception
+    public Byte[] read(Scanner in) throws Exception
     {
         String filename = "";
         int pageNumber = 0;
@@ -181,38 +174,33 @@ public class DFS
         if(in.hasNextInt()){
             pageNumber = in.nextInt();
         }
-        System.out.println("This is the read process");
         
         // TODO: read pageNumber from fileName
-        //return null;
+        return null;
     }
     
-    //Byte[]
-    public void tail(Scanner in) throws Exception
+    public Byte[] tail(Scanner in) throws Exception
     {
         String filename = "";
         System.out.print("Type in the file name: ");
         if(in.hasNext()){
             filename = in.next();
         }
-        System.out.println("This is the tail process");
         
         // TODO: return the last page of the fileName
-        //return null;
+        return null;
     }
 
-    //Byte[]
-    public void head(Scanner in) throws Exception
+    public Byte[] head(Scanner in) throws Exception
     {
         String filename = "";
         System.out.print("Type in the file name: ");
         if(in.hasNext()){
             filename = in.next();
         }
-        System.out.println("This is the head process");
         
         // TODO: return the first page of the fileName
-        //return null;
+        return null;
     }
 
     public void append(Scanner in) throws Exception
@@ -225,7 +213,6 @@ public class DFS
         
         //add size
         Byte[] data = new Byte[10];
-        System.out.println("This is the append process");
         
         // TODO: append data to fileName. If it is needed, add a new page.
         // Let guid be the last page in Metadata.filename
