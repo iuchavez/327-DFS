@@ -35,96 +35,40 @@ public class Client
 
             if(in.hasNextInt()){
                 input = in.nextInt();
-                String filename = "";
-                String oldname = "";
-                String newname = "";
-                int page_num = 0;
-                String ip = "";
 
                 switch(input){
                     case 1:
-                        System.out.print("Type in the IP address: ");
-                        if(in.hasNextLine()) {
-                            ip = in.nextLine();
-                        }
-                        //Port that is being connected to.
-                        System.out.print("Type in the port: ");
-                        if(in.hasNextInt()){
-                            port = in.nextInt();
-                        }
-                        dfs.join(ip, port);
+                        dfs.join(in);
                         break;
                     case 2:
                         dfs.ls();
                         break;
                     case 3:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        dfs.touch(filename);
+                        dfs.touch(in);
                         break;
                     case 4:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        dfs.delete(filename);
+                        dfs.delete(in);
                         break;
                     case 5:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        System.out.print("Type in the page number: ");
-                        if(in.hasNextInt()){
-                            page_num = in.nextInt();
-                        }
-                        dfs.read(filename, page_num);
+                        dfs.read(in);
                         break;
                     case 6:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        dfs.tail(filename);
+                        dfs.tail(in);
                         break;
                     case 7:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        dfs.head(filename);
+                        dfs.head(in);
                         break;
                     case 8:
-                        System.out.print("Type in the file name: ");
-                        if(in.hasNextLine()){
-                            filename = in.nextLine();
-                        }
-                        //add size
-                        Byte[] data = new Byte[10];
-                        dfs.append(filename, data);
+                        dfs.append(in);
                         break;
                     case 9:
-                        System.out.print("Type in the old name for the metadata: ");
-                        if(in.hasNextLine()) {
-                            oldname = in.nextLine();
-                        }
-                        System.out.println();
-
-                        System.out.print("Type in the new name for the metadata: ");
-                        if(in.hasNextLine()) {
-                            newname = in.nextLine();
-                        }
-
-                        dfs.mv(oldname, newname);
-                        System.out.println();
+                        dfs.mv(in);
                         break;
                     default:
                         System.out.println("Invalid input.");
                         break;
                 }
-
+                System.out.println();
             }
         }
 
