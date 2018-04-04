@@ -48,7 +48,7 @@ import java.security.*;
 public class DFS
 {
     int port;
-    //Chord  chord;
+    Chord  chord;
     
     private long md5(String objectName)
     {
@@ -72,8 +72,8 @@ public class DFS
         
         this.port = port;
         long guid = md5("" + port);
-        //chord = new Chord(port, guid);
-        //Files.createDirectories(Paths.get(guid+"/repository"));
+        chord = new Chord(port, guid);
+        Files.createDirectories(Paths.get(guid+"/repository"));
     }
     
     public void join(Scanner in) throws Exception
@@ -87,11 +87,11 @@ public class DFS
             int port = in.nextInt();
         }
 
-        //chord.joinRing(Ip, port);
-        //chord.Print();
+        chord.joinRing(ip, port);
+        chord.Print();
     }
 
-
+    //QUESTION: do we ignore this JsonParser in favor of the GSON?
   /*  public JSonParser readMetaData() throws Exception
     {
         JsonParser jsonParser _ null;
@@ -130,8 +130,12 @@ public class DFS
     public String ls() throws Exception
     {
         String listOfFiles = "";
-       // TODO: returns all the files in the Metadata
-       // JsonParser jp = readMetaData();
+        // TODO: returns all the files in the Metadata
+        JsonParser jp = readMetaData();
+
+        //for all files in metadata
+        //  print filename
+        //  append to listOfFiles
         return listOfFiles;
     }
  
@@ -144,7 +148,8 @@ public class DFS
         }
 
          // TODO: Create the file fileName by adding a new entry to the Metadata
-        // Write Metadata
+        //create file and pass file name as parameter
+        //add file to metadata
     }
 
     public void delete(Scanner in) throws Exception
@@ -176,6 +181,10 @@ public class DFS
         }
         
         // TODO: read pageNumber from fileName
+        //search for file name in file system
+        //if file found
+        //  return page[pageNumber]
+        //else
         return null;
     }
     
@@ -187,7 +196,10 @@ public class DFS
             filename = in.next();
         }
         
-        // TODO: return the last page of the fileName
+        //search for file name in file system
+        //if file found
+        //  return first page AKA page[pageSize - 1]
+        //else
         return null;
     }
 
@@ -199,7 +211,10 @@ public class DFS
             filename = in.next();
         }
         
-        // TODO: return the first page of the fileName
+        // search for file name in file system
+        //if file found
+        //  return first page AKA page[0]
+        //else
         return null;
     }
 
@@ -216,8 +231,9 @@ public class DFS
         
         // TODO: append data to fileName. If it is needed, add a new page.
         // Let guid be the last page in Metadata.filename
-        //ChordMessageInterface peer = chord.locateSuccessor(guid);
-        //peer.put(guid, data);
+        ChordMessageInterface peer = chord.locateSuccessor(guid);
+        peer.put(guid, data);
+        //add to page[pageSize]
         // Write Metadata        
     }
     
