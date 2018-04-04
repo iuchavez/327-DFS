@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+
 import java.rmi.*;
 import java.net.*;
 import java.util.*;
@@ -102,6 +104,35 @@ public class DFS
         return jsonParser;
     }*/
 
+    //Will need to throw exception?
+    public Gson readMetaData(String fName){
+        ChordMessageInterface peer = null;
+        FileReader fReader = null;
+        FileSystem fSys = null;
+        InputStream mdRaw = null;
+        Gson gson = new Gson();
+        long guid = md5(fName);
+
+        try {
+            peer = chord.locateSuccessor(guid);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        mdRaw = peer.get(guid); //Retrieve file from Chord
+
+        try{
+            fSys = gson.fromJson(mdRaw, FileSystem.class); // Retrieve FileSystem object from json file
+        }
+        catch(FileNotFoundException e){ e.printStackTrace();}
+        finally{
+            if(fReader != null){
+                try{fReader.close();}
+                catch (IOException e){e.printStackTrace();}
+            }
+        }
+        return fSys;
+     }
+
     /*public void writeMetaData(InputStream stream) throws Exception
    {
        JsonParser jsonParser _ null;
@@ -110,6 +141,13 @@ public class DFS
        peer.put(guid, stream);
    }
   */
+    public void writeMetaData(FileSystem fSys, String fName){
+        Gson gson = null;
+        long guid = md5(fName));
+        ChordMessageInterface peer = chord.locateSuccessor(guid);
+        peer.put(guid, fSys);  
+    }
+    
     public void mv(Scanner in) throws Exception
     {
         String oldname = "";

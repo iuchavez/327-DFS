@@ -1,11 +1,11 @@
-public class File {
+public class mFile {
     private String name;
     private int numberOfPages;
     private int pageSize;
     private int size;
     private Page page[];
 
-    File() {
+    mFile() {
         name = "";
         numberOfPages = 0;
         pageSize = 0;
@@ -13,7 +13,7 @@ public class File {
         page = new Page[10];
     }
 
-    File(String mFilename, int numPages, int pSize, int sz, Page pg[]) {
+    mFile(String mFilename, int numPages, int pSize, int sz, Page pg[]) {
         name = mFilename;
         numberOfPages = numPages;
         pageSize = pSize;

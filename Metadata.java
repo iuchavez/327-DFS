@@ -1,18 +1,18 @@
 public class Metadata{
-    File file[];
+    mFile file[];
 
     Metadata(){
-        file = new File[2];
+        file = new mFile[2];
     }
 
-    Metadata(File tFiles[]){
+    Metadata(mFile tFiles[]){
         file = tFiles;
     }
 
-    File[] getFile(){
+    mFile[] getFile(){
         return file;
     }
-    void setFile(File tFile[]){
+    void setFile(mFile tFile[]){
         file = tFile;
     }
 }
