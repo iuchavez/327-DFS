@@ -1,2 +1,4 @@
 *.class
-
+.vscode
+.DS_Store
+.idea
