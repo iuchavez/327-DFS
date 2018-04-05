@@ -1,12 +1,5 @@
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-
-import jdk.internal.org.xml.sax.InputSource;
-
-import jdk.internal.org.xml.sax.InputSource;
-
-import jdk.internal.org.xml.sax.InputSource;
-
 import java.rmi.*;
 import java.net.*;
 import java.util.*;
@@ -14,7 +7,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.math.BigInteger;
 import java.security.*;
-//import com.google.gson.
 
 
 /* JSON Format
@@ -159,15 +151,16 @@ public class DFS
   */
     public void writeMetaData(InputStream stream){
         long guid = md5("Metadata");
-        
+        ChordMessageInterface peer = null;
+
         try {
             peer = chord.locateSuccessor(guid);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, stream);  
+        try{
+            peer.put(guid, stream);  
+        } catch (Exception e){e.printStackTrace();}
     }
     
     public void mv(Scanner in) throws Exception
@@ -191,7 +184,7 @@ public class DFS
     {
         String listOfFiles = "";
         JsonReader reader = readMetaData();;
-        FileSystem fSys = getFS(reader);
+        FileSystem fSys = getFileSystem(reader);
 
         //for all files in metadata
         //  print filename
