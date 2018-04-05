@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import jdk.internal.org.xml.sax.InputSource;
 
@@ -111,25 +112,37 @@ public class DFS
     }*/
 
     //Will need to throw exception?
-    public FileSystem readMetaData(){
+    public JsonReader readMetaData(){
         ChordMessageInterface peer = null;
-        InputStreamReader isReader = null;
-        FileSystem fSys = null;
+        JsonReader jReader = null;
         InputStream mdRaw = null;
-        
-        Gson gson = new Gson();
         long guid = md5("Metadata");
+        
             try { peer = chord.locateSuccessor(guid);}
             catch(Exception e){ e.printStackTrace();}
-        mdRaw = peer.get(guid); //Retrieve InputStream from Chord
-        isReader = new Reader(mdRaw, "UTF-8"); //T
-        
-        try{fSys = gson.fromJson(mdRaw, FileSystem.class); // Retrieve FileSystem object from json file
+        try{mdRaw = peer.get(guid);} //Retrieve InputStream from Chord
+        catch(IOException e){e.printStackTrace();}
+
+        try{
+            jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
         }
-        catch(FileNotFoundException e){ e.printStackTrace();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return jReader;
+    }
+    
+    public FileSystem getFileSystem(JsonReader jReader){
+        FileSystem fSys = null;
+        Gson gson = new Gson();
+
+        try{
+            fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
+        }
+        catch(Exception e){ e.printStackTrace();}
         finally{
-            if(fReader != null){
-                try{fReader.close();}
+            if(jReader != null){
+                try{jReader.close();}
                 catch (IOException e){e.printStackTrace();}
             }
         }
@@ -177,8 +190,8 @@ public class DFS
     public String ls() throws Exception
     {
         String listOfFiles = "";
-        // TODO: returns all the files in the Metadata
-        FileSystem fSys = readMetaData();
+        JsonReader reader = readMetaData();;
+        FileSystem fSys = getFS(reader);
 
         //for all files in metadata
         //  print filename
@@ -278,8 +291,8 @@ public class DFS
         
         // TODO: append data to fileName. If it is needed, add a new page.
         // Let guid be the last page in Metadata.filename
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, data);
+        // ChordMessageInterface peer = chord.locateSuccessor(guid);
+        // peer.put(guid, data);
         //add to page[pageSize]
         // Write Metadata        
     }
