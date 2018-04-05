@@ -105,23 +105,20 @@ public class DFS
     }*/
 
     //Will need to throw exception?
-    public Gson readMetaData(String fName){
+    public FileSystem readMetaData(){
         ChordMessageInterface peer = null;
-        FileReader fReader = null;
+        InputStreamReader isReader = null;
         FileSystem fSys = null;
         InputStream mdRaw = null;
+        
         Gson gson = new Gson();
-        long guid = md5(fName);
-
-        try {
-            peer = chord.locateSuccessor(guid);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        mdRaw = peer.get(guid); //Retrieve file from Chord
-
-        try{
-            fSys = gson.fromJson(mdRaw, FileSystem.class); // Retrieve FileSystem object from json file
+        long guid = md5("Metadata");
+            try { peer = chord.locateSuccessor(guid);}
+            catch(Exception e){ e.printStackTrace();}
+        mdRaw = peer.get(guid); //Retrieve InputStream from Chord
+        isReader = new Reader(mdRaw, "UTF-8"); //T
+        
+        try{fSys = gson.fromJson(mdRaw, FileSystem.class); // Retrieve FileSystem object from json file
         }
         catch(FileNotFoundException e){ e.printStackTrace();}
         finally{
@@ -131,7 +128,7 @@ public class DFS
             }
         }
         return fSys;
-     }
+    }
 
     /*public void writeMetaData(InputStream stream) throws Exception
    {
@@ -143,7 +140,7 @@ public class DFS
   */
     public void writeMetaData(FileSystem fSys, String fName){
         Gson gson = null;
-        long guid = md5(fName));
+        long guid = md5(fName);
         ChordMessageInterface peer = chord.locateSuccessor(guid);
         peer.put(guid, fSys);  
     }
@@ -169,7 +166,7 @@ public class DFS
     {
         String listOfFiles = "";
         // TODO: returns all the files in the Metadata
-        JsonParser jp = readMetaData();
+        FileSystem fSys = readMetaData();
 
         //for all files in metadata
         //  print filename
@@ -185,7 +182,7 @@ public class DFS
             filename = in.next();
         }
 
-         // TODO: Create the file fileName by adding a new entry to the Metadata
+        // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
         //add file to metadata
     }
