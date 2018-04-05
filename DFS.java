@@ -1,5 +1,11 @@
 import com.google.gson.Gson;
 
+import jdk.internal.org.xml.sax.InputSource;
+
+import jdk.internal.org.xml.sax.InputSource;
+
+import jdk.internal.org.xml.sax.InputSource;
+
 import java.rmi.*;
 import java.net.*;
 import java.util.*;
@@ -138,11 +144,17 @@ public class DFS
        peer.put(guid, stream);
    }
   */
-    public void writeMetaData(FileSystem fSys, String fName){
-        Gson gson = null;
-        long guid = md5(fName);
+    public void writeMetaData(InputStream stream){
+        long guid = md5("Metadata");
+        
+        try {
+            peer = chord.locateSuccessor(guid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, fSys);  
+        peer.put(guid, stream);  
     }
     
     public void mv(Scanner in) throws Exception
