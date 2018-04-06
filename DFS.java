@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.math.BigInteger;
 import java.security.*;
+import com.google.gson.stream.JsonToken;
 
 
 /* JSON Format
@@ -124,16 +125,49 @@ public class DFS
         return jReader;
     }
     
-    public FileSystem getFileSystem(JsonReader jReader){
-        FileSystem fSys = null;
-        Gson gson = new Gson();
+    public void getFileSystem(JsonReader jReader){
+        String json = "{\"brand\" : \"Toyota\", \"doors\" : 5}";
+        JsonReader jsonReader = new JsonReader(new StringReader(json));
 
-        try{
-            fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
-        }
-        catch(Exception e){ e.printStackTrace();}
+        try {
+            while(jsonReader.hasNext()){
+                JsonToken nextToken = jsonReader.peek();
+                System.out.println(nextToken);
+                if(JsonToken.BEGIN_OBJECT.equals(nextToken)){
+
+                    jsonReader.beginObject();
         
-        return fSys;
+                } else if(JsonToken.NAME.equals(nextToken)){
+        
+                    String name  =  jsonReader.nextName();
+                    System.out.println(name);
+        
+                } else if(JsonToken.STRING.equals(nextToken)){
+        
+                    String value =  jsonReader.nextString();
+                    System.out.println(value);
+        
+                } else if(JsonToken.NUMBER.equals(nextToken)){
+        
+                    long value =  jsonReader.nextLong();
+                    System.out.println(value);
+        
+                }
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // FileSystem fSys = null;
+        // Gson gson = new Gson();
+
+        // try{
+        //     fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
+        // }
+        // catch(Exception e){ e.printStackTrace();}
+        
+        // return fSys;
     }
 
     /*public void writeMetaData(InputStream stream) throws Exception
@@ -184,7 +218,8 @@ public class DFS
     {
         String listOfFiles = "";
         JsonReader reader = readMetaData();;
-        FileSystem fSys = getFileSystem(reader);
+        //FileSystem fSys = getFileSystem(reader);
+        getFileSystem(reader);
 
         //for all files in metadata
         //  print filename

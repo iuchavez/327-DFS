@@ -4,9 +4,14 @@ import java.util.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.security.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+
+
+
+
 
 public class Client {
     DFS dfs;
@@ -22,19 +27,22 @@ public class Client {
        
         FileWriter fWriter = null;
         FileReader fReader = null;
-        FileStream jsonStream = null;
+        FileStream jsonFileStream = null;
         
         try {
             fWriter = new FileWriter("327FS.json"); //Create a writer to write to json file
             fWriter.write(gson.toJson(fileSystem)); //Write FileSystem object to json file
-            //System.out.println("OG\n" + gson.toJson(fileSystem)); //Display json contents
+            
+            jsonFileStream = new FileStream("327FS.json");
 
-            jsonStream = new FileStream("327FS.json");
-            dfs.writeMetaData(jsonStream);
+            
+            //System.out.println(convert(jsonFileStream, Charset.defaultCharset())); //Display json contents
+
+            dfs.writeMetaData(jsonFileStream);
             JsonReader jReader = dfs.readMetaData();
             // jReader.setLenient(true);
             // jReader.beginArray();
-            // fileSystem = dfs.getFileSystem(jReader);
+            dfs.getFileSystem(jReader);
             // System.out.println(fileSystem.metadata.file[0].getPageSize());
         }
         catch (IOException e){ e.printStackTrace();}
