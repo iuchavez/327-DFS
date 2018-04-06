@@ -5,20 +5,53 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.*;
 import java.nio.file.*;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
-
-public class Client
-{
+public class Client {
     DFS dfs;
 
     public Client(int p) throws Exception {
-    dfs = new DFS(p);
-    int port = p;
+        dfs = new DFS(p);
+        int port = p;
+        
+        // Testing
+        FileSystem fileSystem = new FileSystem();
+        Gson gson = new Gson();
+        String fileSystemJson = gson.toJson(fileSystem);
+       
+        FileWriter fWriter = null;
+        FileReader fReader = null;
+        FileStream jsonStream = null;
+        
+        try {
+            fWriter = new FileWriter("327FS.json"); //Create a writer to write to json file
+            fWriter.write(gson.toJson(fileSystem)); //Write FileSystem object to json file
+            //System.out.println("OG\n" + gson.toJson(fileSystem)); //Display json contents
+
+            jsonStream = new FileStream("327FS.json");
+            dfs.writeMetaData(jsonStream);
+            JsonReader jReader = dfs.readMetaData();
+            // jReader.setLenient(true);
+            // jReader.beginArray();
+            // fileSystem = dfs.getFileSystem(jReader);
+            // System.out.println(fileSystem.metadata.file[0].getPageSize());
+        }
+        catch (IOException e){ e.printStackTrace();}
+        finally {
+            if(fWriter != null){
+                try{fWriter.close();}
+                catch (IOException e){e.printStackTrace();}
+            }
+        }
+        
+        
+        
 
         Scanner in = new Scanner(System.in);
         int input = 0;
 
-        while(input != 10){
+        while (input != 10) {
 
             System.out.println("------MAIN MENU------");
             System.out.println("-------1. JOIN-------");
@@ -33,40 +66,40 @@ public class Client
             System.out.println("------10. EXIT-------");
             System.out.print("Type in an option number: ");
 
-            if(in.hasNextInt()){
+            if (in.hasNextInt()) {
                 input = in.nextInt();
 
-                switch(input){
-                    case 1:
-                        dfs.join(in);
-                        break;
-                    case 2:
-                        dfs.ls();
-                        break;
-                    case 3:
-                        dfs.touch(in);
-                        break;
-                    case 4:
-                        dfs.delete(in);
-                        break;
-                    case 5:
-                        dfs.read(in);
-                        break;
-                    case 6:
-                        dfs.tail(in);
-                        break;
-                    case 7:
-                        dfs.head(in);
-                        break;
-                    case 8:
-                        dfs.append(in);
-                        break;
-                    case 9:
-                        dfs.mv(in);
-                        break;
-                    default:
-                        System.out.println("Invalid input.");
-                        break;
+                switch (input) {
+                case 1:
+                    dfs.join(in);
+                    break;
+                case 2:
+                    dfs.ls();
+                    break;
+                case 3:
+                    dfs.touch(in);
+                    break;
+                case 4:
+                    dfs.delete(in);
+                    break;
+                case 5:
+                    dfs.read(in);
+                    break;
+                case 6:
+                    dfs.tail(in);
+                    break;
+                case 7:
+                    dfs.head(in);
+                    break;
+                case 8:
+                    dfs.append(in);
+                    break;
+                case 9:
+                    dfs.mv(in);
+                    break;
+                default:
+                    System.out.println("Invalid input.");
+                    break;
                 }
                 System.out.println();
             }
@@ -75,12 +108,11 @@ public class Client
         System.out.println("Exit Client.");
     }
 
-    static public void main(String args[]) throws Exception
-    {
-        if (args.length < 1 ) {
+    static public void main(String args[]) throws Exception {
+        if (args.length < 1) {
             throw new IllegalArgumentException("Parameter: <port>");
         }
-        Client client=new Client( Integer.parseInt(args[0]));
+        Client client = new Client(Integer.parseInt(args[0]));
 
     }
 }

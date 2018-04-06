@@ -132,12 +132,7 @@ public class DFS
             fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
         }
         catch(Exception e){ e.printStackTrace();}
-        finally{
-            if(jReader != null){
-                try{jReader.close();}
-                catch (IOException e){e.printStackTrace();}
-            }
-        }
+        
         return fSys;
     }
 
@@ -149,6 +144,11 @@ public class DFS
        peer.put(guid, stream);
    }
   */
+
+    /**
+     * To write out the index info that has been read from a file
+     * @param InputStream the file system info that is being written to the file system
+     */
     public void writeMetaData(InputStream stream){
         long guid = md5("Metadata");
         ChordMessageInterface peer = null;
