@@ -1,5 +1,5 @@
 import com.google.gson.Gson;
-
+import com.google.gson.stream.JsonReader;
 import java.rmi.*;
 import java.net.*;
 import java.util.*;
@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.math.BigInteger;
 import java.security.*;
-//import com.google.gson.
+import com.google.gson.stream.JsonToken;
 
 
 /* JSON Format
@@ -105,33 +105,70 @@ public class DFS
     }*/
 
     //Will need to throw exception?
-    public Gson readMetaData(String fName){
+    public JsonReader readMetaData(){
         ChordMessageInterface peer = null;
-        FileReader fReader = null;
-        FileSystem fSys = null;
+        JsonReader jReader = null;
         InputStream mdRaw = null;
-        Gson gson = new Gson();
-        long guid = md5(fName);
-
-        try {
-            peer = chord.locateSuccessor(guid);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        mdRaw = peer.get(guid); //Retrieve file from Chord
+        long guid = md5("Metadata");
+        
+            try { peer = chord.locateSuccessor(guid);}
+            catch(Exception e){ e.printStackTrace();}
+        try{mdRaw = peer.get(guid);} //Retrieve InputStream from Chord
+        catch(IOException e){e.printStackTrace();}
 
         try{
-            fSys = gson.fromJson(mdRaw, FileSystem.class); // Retrieve FileSystem object from json file
+            jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
         }
-        catch(FileNotFoundException e){ e.printStackTrace();}
-        finally{
-            if(fReader != null){
-                try{fReader.close();}
-                catch (IOException e){e.printStackTrace();}
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return jReader;
+    }
+    
+    public void getFileSystem(JsonReader jReader){
+        String json = "{\"brand\" : \"Toyota\", \"doors\" : 5}";
+        JsonReader jsonReader = new JsonReader(new StringReader(json));
+
+        try {
+            while(jsonReader.hasNext()){
+                JsonToken nextToken = jsonReader.peek();
+                System.out.println(nextToken);
+                if(JsonToken.BEGIN_OBJECT.equals(nextToken)){
+
+                    jsonReader.beginObject();
+        
+                } else if(JsonToken.NAME.equals(nextToken)){
+        
+                    String name  =  jsonReader.nextName();
+                    System.out.println(name);
+        
+                } else if(JsonToken.STRING.equals(nextToken)){
+        
+                    String value =  jsonReader.nextString();
+                    System.out.println(value);
+        
+                } else if(JsonToken.NUMBER.equals(nextToken)){
+        
+                    long value =  jsonReader.nextLong();
+                    System.out.println(value);
+        
+                }
             }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return fSys;
-     }
+
+        // FileSystem fSys = null;
+        // Gson gson = new Gson();
+
+        // try{
+        //     fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
+        // }
+        // catch(Exception e){ e.printStackTrace();}
+        
+        // return fSys;
+    }
 
     /*public void writeMetaData(InputStream stream) throws Exception
    {
@@ -141,11 +178,23 @@ public class DFS
        peer.put(guid, stream);
    }
   */
-    public void writeMetaData(FileSystem fSys, String fName){
-        Gson gson = null;
-        long guid = md5(fName));
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, fSys);  
+
+    /**
+     * To write out the index info that has been read from a file
+     * @param InputStream the file system info that is being written to the file system
+     */
+    public void writeMetaData(InputStream stream){
+        long guid = md5("Metadata");
+        ChordMessageInterface peer = null;
+
+        try {
+            peer = chord.locateSuccessor(guid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try{
+            peer.put(guid, stream);  
+        } catch (Exception e){e.printStackTrace();}
     }
     
     public void mv(Scanner in) throws Exception
@@ -168,8 +217,9 @@ public class DFS
     public String ls() throws Exception
     {
         String listOfFiles = "";
-        // TODO: returns all the files in the Metadata
-        JsonParser jp = readMetaData();
+        JsonReader reader = readMetaData();;
+        //FileSystem fSys = getFileSystem(reader);
+        getFileSystem(reader);
 
         //for all files in metadata
         //  print filename
@@ -185,7 +235,7 @@ public class DFS
             filename = in.next();
         }
 
-         // TODO: Create the file fileName by adding a new entry to the Metadata
+        // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
         //add file to metadata
     }
@@ -269,8 +319,8 @@ public class DFS
         
         // TODO: append data to fileName. If it is needed, add a new page.
         // Let guid be the last page in Metadata.filename
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        peer.put(guid, data);
+        // ChordMessageInterface peer = chord.locateSuccessor(guid);
+        // peer.put(guid, data);
         //add to page[pageSize]
         // Write Metadata        
     }
