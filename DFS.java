@@ -11,6 +11,11 @@ import java.math.BigInteger;
 import java.security.*;
 import com.google.gson.stream.JsonToken;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
+
+
 /* JSON Format
 
  {
@@ -98,10 +103,12 @@ public class DFS {
     }*/
 
     //Will need to throw exception?
-    public JsonReader readMetaData() {
+    public JsonElement readMetaData() {
         ChordMessageInterface peer = null;
         JsonReader jReader = null;
         InputStream mdRaw = null;
+        JsonElement jElement = null;
+        JsonParser parsedJson = null;
         long guid = md5("Metadata");
 
         try {
@@ -113,6 +120,7 @@ public class DFS {
 
         try {
             mdRaw = peer.get(guid);
+            //System.out.println("This is the JSon after it is gotten from Chord" + getStringFromInputStream(mdRaw));
         } //Retrieve InputStream from Chord
         catch (IOException e) {
             System.out.println("readMetaData() failed at the get function");
@@ -120,12 +128,24 @@ public class DFS {
         }
 
         try {
-            jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
+            
+            parsedJson = new JsonParser();
+            System.out.println("First line executed only.");
+            InputStreamReader jsonInputReader = new InputStreamReader(mdRaw);
+            System.out.println("Second line executed.");
+            jElement  = parsedJson.parse(jsonInputReader);
+            System.out.println("Third line executed.");
+
+            // parsedJson.parse(new InputStreamReader(mdRaw));
+            // jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
             //System.out.println(getStringFromInputStream(mdRaw));
 
-        } catch (Exception e) {
-            System.out.println("readMetaData() failed at creating a jReader");
-            //e.printStackTrace();
+        } catch (JsonIOException f) {
+            System.out.println("Read Metadata IO exception!");
+        } catch (JsonSyntaxException g) {
+            System.out.println("Read Metadata syntax error! ");
+        } catch (JsonParseException h) {
+            System.out.println("Not valid Json!");
         }
 
         // JsonParser parsedJson = new JsonParser();
@@ -133,11 +153,11 @@ public class DFS {
 
         // System.out.println("Err Check @ 125 - readMetaData() before return");
         // System.out.println(jElement.toString());
-        return jReader;
+        return jElement;
     }
 
     // convert InputStream to String
-    private static String getStringFromInputStream(InputStream is) {
+    public static String getStringFromInputStream(InputStream is) {
 
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -154,16 +174,16 @@ public class DFS {
             //System.out.println("This happened in the getStringFromInputStream() method");
             e.printStackTrace();
         } 
-        finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    //System.out.println("This happened in the getStringFromInputStream() method");
-                    e.printStackTrace();
-                }
-            }
-        }
+        // finally {
+        //     if (br != null) {
+        //         try {
+        //             br.close();
+        //         } catch (IOException e) {
+        //             //System.out.println("This happened in the getStringFromInputStream() method");
+        //             e.printStackTrace();
+        //         }
+        //     }
+        // }
 
         return sb.toString();
 
@@ -247,7 +267,7 @@ public class DFS {
      */
     public void writeMetaData(InputStream stream) {
 
-        System.out.print(getStringFromInputStream(stream));
+        //System.out.print(getStringFromInputStream(stream));
 
         long guid = md5("Metadata");
         ChordMessageInterface peer = null;
@@ -283,10 +303,9 @@ public class DFS {
 
     public String ls() throws Exception {
         String listOfFiles = "";
-        JsonReader reader = readMetaData();
-        ;
+        JsonElement reader = readMetaData();
         //FileSystem fSys = getFileSystem(reader);
-        getFileSystem(reader);
+        //getFileSystem(reader);
 
         //for all files in metadata
         //  print filename

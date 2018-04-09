@@ -8,6 +8,9 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonElement;
+
 
 public class Client {
     DFS dfs;
@@ -37,22 +40,32 @@ public class Client {
             //Create a writer to write to json file and Write FileSystem object to it
             fWriter = new FileWriter("327FS.json"); 
             fWriter.write(gson.toJson(fileSystem));
+            fWriter.close();
 
             // Read from the file using a FileSream, our own defined Input Stream object
             //jsonFileStream = new FileStream("327FS.json");
             
             //Test Code -----------------------
-            File file = new File("327FS.json");
-            InputStream inputStream = new FileInputStream(file);
+
+            InputStream is = null;
+            try {
+                is = new FileInputStream("327FS.json");
+            } catch (FileNotFoundException e) {
+               System.out.println("The file was not found!");
+            }
+            // File file = new File("327FS.json");
+            // InputStream inputStream = new FileInputStream(file);
+
+            System.out.println("This is the JSON from Input stream: " + dfs.getStringFromInputStream(is));
             ////////////////////////////////
             
             //System.out.println("Print out the json from the File Stream: " + convert(jsonFileStream, Charset.defaultCharset())); //Display json contents
 
-            dfs.writeMetaData(inputStream);
-            JsonReader jReader = dfs.readMetaData();
+            dfs.writeMetaData(is);
+            //JsonElement parsedJson = dfs.readMetaData();
             // jReader.setLenient(true);
             // jReader.beginArray();
-            dfs.getFileSystem(jReader);
+            //dfs.getFileSystem(is);
             // System.out.println(fileSystem.metadata.file[0].getPageSize());
         } catch (IOException e) {
             e.printStackTrace();
