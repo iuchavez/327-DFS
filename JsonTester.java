@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-public class JsonParser {
+public class JsonTester {
    static public void main (final String[] args){
        Gson gson = new Gson();
        int nId = 312;

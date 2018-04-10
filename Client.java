@@ -8,53 +8,76 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-
-
-
+import com.google.gson.JsonParser;
+import com.google.gson.JsonElement;
 
 
 public class Client {
     DFS dfs;
 
     public Client(int p) throws Exception {
+        // Instantiate data member
         dfs = new DFS(p);
+
+        // rename the input
         int port = p;
-        
-        // Testing
-        FileSystem fileSystem = new FileSystem();
-        Gson gson = new Gson();
-        String fileSystemJson = gson.toJson(fileSystem);
-       
+
+        // Initialize IO obejects to NULL
         FileWriter fWriter = null;
         FileReader fReader = null;
         FileStream jsonFileStream = null;
-        
+
+        // Instantiate a GSON object
+        Gson gson = new Gson();
+
+        // Populare FileSystem Object with dummy data
+        FileSystem fileSystem = dummyData();
+
+        // Test the dummy data
+        // String fileSystemJson = gson.toJson(fileSystem);
+        // System.out.println("The File System Object converted into a String: \n" + fileSystemJson);
         try {
-            fWriter = new FileWriter("327FS.json"); //Create a writer to write to json file
-            fWriter.write(gson.toJson(fileSystem)); //Write FileSystem object to json file
-            
-            jsonFileStream = new FileStream("327FS.json");
+            //Create a writer to write to json file and Write FileSystem object to it
+            fWriter = new FileWriter("327FS.json"); 
+            fWriter.write(gson.toJson(fileSystem));
+            fWriter.close();
 
+            // Read from the file using a FileSream, our own defined Input Stream object
+            //jsonFileStream = new FileStream("327FS.json");
             
-            //System.out.println(convert(jsonFileStream, Charset.defaultCharset())); //Display json contents
+            //Test Code -----------------------
 
-            dfs.writeMetaData(jsonFileStream);
-            JsonReader jReader = dfs.readMetaData();
+            InputStream is = null;
+            try {
+                is = new FileInputStream("327FS.json");
+            } catch (FileNotFoundException e) {
+               System.out.println("The file was not found!");
+            }
+            // File file = new File("327FS.json");
+            // InputStream inputStream = new FileInputStream(file);
+
+            //System.out.println("This is the JSON from Input stream: " + dfs.getStringFromInputStream(is));
+            ////////////////////////////////
+            
+            //System.out.println("Print out the json from the File Stream: " + convert(jsonFileStream, Charset.defaultCharset())); //Display json contents
+
+            dfs.writeMetaData(is);
+            //JsonElement parsedJson = dfs.readMetaData();
             // jReader.setLenient(true);
             // jReader.beginArray();
-            dfs.getFileSystem(jReader);
+            //dfs.getFileSystem(is);
             // System.out.println(fileSystem.metadata.file[0].getPageSize());
-        }
-        catch (IOException e){ e.printStackTrace();}
-        finally {
-            if(fWriter != null){
-                try{fWriter.close();}
-                catch (IOException e){e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fWriter != null) {
+                try {
+                    fWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        
-        
-        
 
         Scanner in = new Scanner(System.in);
         int input = 0;
@@ -114,6 +137,20 @@ public class Client {
         }
 
         System.out.println("Exit Client.");
+    }
+
+    public FileSystem dummyData() {
+        Page page[] = new Page[2]; //Blank Pages - Shows up as null
+
+        //Creating Song Files to be stored within metadata - Arbitrary Values
+        mFile songs[] = new mFile[2];
+        songs[0] = new mFile("LOLSMH", 1, 10, 10, page);
+        songs[1] = new mFile("Pheonix", 1, 15, 15, page);
+
+        //Creating Metadata objects and file strucuture object
+        Metadata mData = new Metadata(songs);
+        FileSystem fileSystem = new FileSystem(mData);
+        return fileSystem;
     }
 
     static public void main(String args[]) throws Exception {
