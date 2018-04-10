@@ -420,40 +420,38 @@ public class DFS {
             pageNumber = in.nextInt();
         }
 
-        // TODO: read pageNumber from fileName
-        //search for file name in file system
-        //if file found
-        //  return page[pageNumber]
-        //else
+        Metadata md = readMetaData2();
+        LinkedList<mFile> files = md.getFile();
+        for(mFile file: files){
+            if(file.getName().equals(filename) && file != null){
+                return file.getPage().get(pageNumber);
+            }
+        }
+        //convert page to Byte[]?
         return null;
     }
 
     public Byte[] tail(Scanner in) throws Exception {
         String filename = "";
-        System.out.print("Type in the file name: ");
+        System.out.print("Type in the file name (no extensions needed): ");
         if (in.hasNext()) {
             filename = in.next();
         }
-        mFile ref = new mFile();
 
         Metadata md = readMetaData2();
         LinkedList<mFile> files = md.getFile();
-        LinkedList<Page> filePages = new LinkedList<Page>();
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null){
-                ref = file;
-                
+                return file.getPage().getLast();
             }
-                //get last page of a file
-                ref = file.getLast();
         }
-        //convert mFile object to Byte[]
+        //convert page to Byte[]?
         return null;
     }
 
     public Byte[] head(Scanner in) throws Exception {
         String filename = "";
-        System.out.print("Type in the file name: ");
+        System.out.print("Type in the file name (no extensions needed): ");
         if (in.hasNext()) {
             filename = in.next();
         }
@@ -461,11 +459,11 @@ public class DFS {
         Metadata md = readMetaData2();
         LinkedList<mFile> files = md.getFile();
         for(mFile file: files){
-            if(file.getName().equals(filename) && file != null)
-                //get first page of a file
-                return file.getFirst();
+            if(file.getName().equals(filename) && file != null){
+                return file.getPage().getLast();
+            }
         }
-        //convert mFile object to Byte[]
+        //convert page to Byte[]?
         return null;
     }
 
