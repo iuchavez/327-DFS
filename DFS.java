@@ -360,7 +360,7 @@ public class DFS {
         String listOfFiles = "";
         StringBuilder loFiles = new StringBuilder();
         Metadata md = readMetaData();
-        LinkedList<mFile> files = new LinkedList<mFile>();
+        LinkedList<mFile> files = md.getFile();
         for(int i = 0; i<files.size(); i++){
             loFiles.append(files.get(i).getName());
             loFiles.append("\n");
@@ -403,7 +403,8 @@ public class DFS {
         // Write Metadata 
     }
 
-    public Byte[] read(Scanner in) throws Exception {
+    public Page read(Scanner in) throws Exception {
+        Metadata md = readMetaData();
         String filename = "";
         int pageNumber = 0;
         System.out.print("Type in the file name: ");
@@ -413,6 +414,22 @@ public class DFS {
         System.out.print("Type in the page number: ");
         if (in.hasNextInt()) {
             pageNumber = in.nextInt();
+        }
+
+        LinkedList<mFile> files = md.getFile();
+        for(int i = 0; i<files.size(); i++){
+            mFile file = files.get(i);
+            if(file.getName() == filename){
+                if(pageNumber>file.getNumberOfPages())
+                    return null;
+                else{
+                    LinkedList<Page> pgs = file.getPage();
+                    pgs.get(pageNumber);
+                }
+            }
+            else if(i == (files.size()-1) && files.get(i).getName() != filename){
+                return null;
+            }
         }
 
         // TODO: read pageNumber from fileName
@@ -474,11 +491,9 @@ public class DFS {
         for(int i = 0; i<files.size(); i++){
             // file = files.get(i);
             if(files.get(i).getName() == filename){
-                // file = files.
-
+                file = files.remove(i);
             }
         }
-        file = files.pollLast();
         file.addPage(pg);
         files.add(file);
         md.setFile(files);
