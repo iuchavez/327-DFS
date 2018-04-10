@@ -394,12 +394,17 @@ public class DFS {
         }
 
         Metadata md = readMetaData2();
-
-        // TODO: remove all the pages in the entry fileName in the Metadata and then the entry
-        // for each page in Metadata.filename
-        //     peer = chord.locateSuccessor(page.guid);
-        //     peer.delete(page.guid)
-        // delete Metadata.filename
+        LinkedList<mFile> f = md.getFile();
+        for(mFile m : f) {
+            if(m.getName().equals(filename)){
+                LinkedList<Page> pages = m.getPage();
+                for(Page p : pages){
+                    peer = chord.locateSuccessor(p.getGuid());
+                    peer.delete(p.getGuid();
+                }
+                md.removeFile(m);
+            }
+        }
         writeMetaData(md);
     }
 
@@ -430,10 +435,11 @@ public class DFS {
             filename = in.next();
         }
         Metadata md = readMetaData2();
-        LinkedList<mFile> f = md.getFile();
-        //get file where filename = input
-        //if(f != null)
-        //    return f.getLast();
+        LinkedList<mFile> files = md.getFile();
+        for(mFile file: files){
+            if(file.getName().equals(filename) && file != null)
+                return f.getLast();
+        }
         return null;
     }
 
@@ -446,9 +452,10 @@ public class DFS {
 
         Metadata md = readMetaData2();
         LinkedList<mFile> f = md.getFile();
-        //get file where filename = input
-        //if(f != null)
-        //    return f.getFirst();
+        for(mFile file: files){
+            if(file.getName().equals(filename) && file != null)
+                return f.getLast();
+        }
         return null;
     }
 
