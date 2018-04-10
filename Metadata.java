@@ -39,4 +39,8 @@ public class Metadata{
 		return file.peekLast();
 	}
 
+	void removeFile(mFile tFile){
+		file.remove(tFile);
+	}
+
 }

@@ -397,16 +397,25 @@ public class DFS {
 
     public void delete(Scanner in) throws Exception {
         String filename = "";
+        ChordMessageInterface peer = null;
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
         }
-        // TODO: remove all the pages in the entry fileName in the Metadata and then the entry
-        // for each page in Metadata.filename
-        //     peer = chord.locateSuccessor(page.guid);
-        //     peer.delete(page.guid)
-        // delete Metadata.filename
-        // Write Metadata 
+
+        Metadata md = readMetaData();
+        LinkedList<mFile> f = md.getFile();
+        for(mFile m : f) {
+            if(m.getName().equals(filename)){
+                LinkedList<Page> pages = m.getPage();
+                for(Page p : pages){
+                    peer = chord.locateSuccessor(p.getGuid());
+                    peer.delete(p.getGuid());
+                }
+                md.removeFile(m);
+            }
+        }
+        writeMetaData(md);
     }
 
     public Page read(Scanner in) throws Exception {
@@ -446,31 +455,39 @@ public class DFS {
         return null;
     }
 
-    public Byte[] tail(Scanner in) throws Exception {
+    public Page tail(Scanner in) throws Exception {
         String filename = "";
-        System.out.print("Type in the file name: ");
+        System.out.print("Type in the file name (no extensions needed): ");
         if (in.hasNext()) {
             filename = in.next();
         }
 
-        //search for file name in file system
-        //if file found
-        //  return first page AKA page[pageSize - 1]
-        //else
+        Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        for(mFile file: files){
+            if(file.getName().equals(filename) && file != null){
+                return file.getPage().getLast();
+            }
+        }
+        //convert page to Byte[]?
         return null;
     }
 
-    public Byte[] head(Scanner in) throws Exception {
+    public Page head(Scanner in) throws Exception {
         String filename = "";
-        System.out.print("Type in the file name: ");
+        System.out.print("Type in the file name (no extensions needed): ");
         if (in.hasNext()) {
             filename = in.next();
         }
 
-        // search for file name in file system
-        //if file found
-        //  return first page AKA page[0]
-        //else
+        Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        for(mFile file: files){
+            if(file.getName().equals(filename) && file != null){
+                return file.getPage().getFirst();
+            }
+        }
+        //convert page to Byte[]?
         return null;
     }
 
