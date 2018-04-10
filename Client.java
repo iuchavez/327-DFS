@@ -56,7 +56,7 @@ public class Client {
             // File file = new File("327FS.json");
             // InputStream inputStream = new FileInputStream(file);
 
-            System.out.println("This is the JSON from Input stream: " + dfs.getStringFromInputStream(is));
+            //System.out.println("This is the JSON from Input stream: " + dfs.getStringFromInputStream(is));
             ////////////////////////////////
             
             //System.out.println("Print out the json from the File Stream: " + convert(jsonFileStream, Charset.defaultCharset())); //Display json contents

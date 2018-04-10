@@ -2,6 +2,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.GsonBuilder;
+
 import java.rmi.*;
 import java.net.*;
 import java.util.*;
@@ -14,6 +16,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParseException;
+
 
 
 /* JSON Format
@@ -80,13 +84,14 @@ public class DFS {
     public void join(Scanner in) throws Exception {
         System.out.print("Type in the IP address: ");
         String ip = in.next();
+        int port = 8080;
 
         //Port that is being connected to.
         if (!ip.equals(null)) {
             System.out.print("Type in the port: ");
-            int port = in.nextInt();
+            port = in.nextInt();
         }
-
+        System.out.println(ip + " Port "  + port);
         chord.joinRing(ip, port);
         chord.Print();
     }
@@ -102,6 +107,32 @@ public class DFS {
         return jsonParser;
     }*/
 
+
+    public myMetaData readMetaData2()
+    {
+        ChordMessageInterface peer = null;
+        InputStream mdRaw = null;
+        long guid = md5("Metadata");
+        myMetaData m;
+
+
+        try {
+            peer = chord.locateSuccessor(guid);
+            mdRaw = peer.get(guid);
+            Reader reader =  new InputStreamReader(mdRaw);
+            Gson gson = new GsonBuilder().create();
+            m = gson.fromJson(reader, myMetaData.class);
+        } catch (Exception e) {
+            m = new myMetaData();
+            m.setName("Isaac");
+            //System.out.println("The successor could not be found");
+            //e.printStackTrace();
+        }
+
+        return m;
+
+    }
+
     //Will need to throw exception?
     public JsonElement readMetaData() {
         ChordMessageInterface peer = null;
@@ -113,6 +144,8 @@ public class DFS {
 
         try {
             peer = chord.locateSuccessor(guid);
+            chord.Print();
+            System.out.println("Closest Succesor: " + peer.getId());
         } catch (Exception e) {
             System.out.println("The successor could not be found");
             //e.printStackTrace();
@@ -261,16 +294,36 @@ public class DFS {
     }
     */
 
+    public void writeMetaData(myMetaData metadata) {
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(metadata);
+        
+        try {
+            FileWriter  writter = new FileWriter("327FS.json");
+            writter.write(json);
+            writter.close();
+            long guid = md5("Metadata");
+            ChordMessageInterface peer = null;
+            peer = chord.locateSuccessor(guid);
+            peer.put(guid, new FileStream("327FS.json"));
+        }catch(Exception e)
+        {
+
+            
+        }
+    }
+
     /**
      * To write out the index info that has been read from a file
      * @param InputStream the file system info that is being written to the file system
      */
     public void writeMetaData(InputStream stream) {
 
-        //System.out.print(getStringFromInputStream(stream));
+        System.out.print(getStringFromInputStream(stream));
 
         long guid = md5("Metadata");
         ChordMessageInterface peer = null;
+        
 
         try {
             peer = chord.locateSuccessor(guid);
@@ -279,6 +332,7 @@ public class DFS {
         }
         try {
             peer.put(guid, stream);
+            // System.out.println("Closest Succesor: s" + peer.getId());
         } catch (Exception e) {
             //e.printStackTrace();
             System.out.println("There was an error in the writeMetaData() method");
@@ -314,6 +368,12 @@ public class DFS {
     }
 
     public void touch(Scanner in) throws Exception {
+        myMetaData md = readMetaData2();
+        md.setLocation("CSULB");
+        writeMetaData(md);
+
+
+
         String filename = "";
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
