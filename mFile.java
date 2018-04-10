@@ -1,19 +1,37 @@
+import java.util.LinkedList;
+
+/** \file */
+
+/** \brief This file implements a DFS file.
+ */
+
 public class mFile {
     private String name;
     private int numberOfPages;
     private int pageSize;
     private int size;
-    private Page page[];
+    private LinkedList<Page> page;
 
+    /**
+ 	* Constructs a metadata instance
+ 	*/
     mFile() {
         name = "";
         numberOfPages = 0;
         pageSize = 0;
         size = 0;
-        page = new Page[10];
+        page = new LinkedList<Page>();
     }
 
-    mFile(String mFilename, int numPages, int pSize, int sz, Page pg[]) {
+    /**
+ 	* Constructs a DFS instance with info
+ 	* \param mFilename filename
+ 	* \param numPages page count
+ 	* \param pSize page size
+ 	* \param sz file size
+ 	* \param pg pages
+ 	*/
+    mFile(String mFilename, int numPages, int pSize, int sz, LinkedList pg) {
         name = mFilename;
         numberOfPages = numPages;
         pageSize = pSize;
@@ -21,35 +39,64 @@ public class mFile {
         page = pg;
     }
 
-    String getName(){
-        return name;
-    }
-    int getNumberOfPages(){
-        return numberOfPages;
-    }
-    int getPageSize(){
-        return pageSize;
-    }
-    int getSize(){
-        return size;
-    }
-    Page[] getPage(){
-        return page;
-    }
+    /**
+ 	* Returns file name
+ 	* \return filename
+ 	*/
+    String getName(){ return name; }
 
-    void setName(String nm){
-        name = nm;
-    }
-    void setNumberOfPages(int numOPages){
-        numberOfPages = numOPages;
-    }
-    void setPageSize(int pSize){
-        pageSize = pSize;
-    }
-    void setSize(int sz){
-        size = sz;
-    }
-    void setPage(Page pg[]){
-        page = pg;
-    }
+    /**
+ 	* Returns page count
+ 	* \return page count
+ 	*/
+    int getNumberOfPages(){ return numberOfPages; }
+
+    /**
+ 	* Returns page size
+ 	* \return page size
+ 	*/
+    int getPageSize(){ return pageSize; }
+
+    /**
+ 	* Returns file size
+ 	* \return file size
+ 	*/
+    int getSize(){ return size; }
+
+    /**
+ 	* Returns page
+ 	* \return page
+ 	*/
+    LinkedList<Page> getPage(){ return page; }
+
+    /**
+ 	* Sets file name
+ 	* \param nm name
+ 	*/
+    void setName(String nm){ name = nm; }
+
+    /**
+ 	* Sets page count
+ 	* \param numOPages page count
+ 	*/
+    void setNumberOfPages(int numOPages){ numberOfPages = numOPages; }
+
+    /**
+ 	* Sets page size
+ 	* \param pSize page size
+ 	*/
+    void setPageSize(int pSize){ pageSize = pSize; }
+
+    /**
+ 	* Sets file size
+ 	* \param sz size
+ 	*/
+    void setSize(int sz){ size = sz; }
+
+    /**
+ 	* Sets pages
+ 	* \param pg pages
+ 	*/
+    void setPage(LinkedList<Page> pg){ page = pg; }
+    void addPage(Page pg){ page.add(pg); }
 }
