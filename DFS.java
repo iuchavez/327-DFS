@@ -392,12 +392,15 @@ public class DFS {
         if (in.hasNext()) {
             filename = in.next();
         }
+
+        Metadata md = readMetaData2();
+
         // TODO: remove all the pages in the entry fileName in the Metadata and then the entry
         // for each page in Metadata.filename
         //     peer = chord.locateSuccessor(page.guid);
         //     peer.delete(page.guid)
         // delete Metadata.filename
-        // Write Metadata 
+        writeMetaData(md);
     }
 
     public Byte[] read(Scanner in) throws Exception {
@@ -426,11 +429,11 @@ public class DFS {
         if (in.hasNext()) {
             filename = in.next();
         }
-
-        //search for file name in file system
-        //if file found
-        //  return first page AKA page[pageSize - 1]
-        //else
+        Metadata md = readMetaData2();
+        LinkedList<mFile> f = md.getFile();
+        //get file where filename = input
+        //if(f != null)
+        //    return f.getLast();
         return null;
     }
 
@@ -441,10 +444,11 @@ public class DFS {
             filename = in.next();
         }
 
-        // search for file name in file system
-        //if file found
-        //  return first page AKA page[0]
-        //else
+        Metadata md = readMetaData2();
+        LinkedList<mFile> f = md.getFile();
+        //get file where filename = input
+        //if(f != null)
+        //    return f.getFirst();
         return null;
     }
 

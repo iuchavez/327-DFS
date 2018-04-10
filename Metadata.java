@@ -35,4 +35,8 @@ public class Metadata{
 	 */
 	void addFile(mFile tFile){ file.add(tFile); }
 
+    /**
+    * Removes file from file linked list
+    */
+    void removeFile(mFile tfile) { file.remove(tfile); }
 }

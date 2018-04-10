@@ -112,6 +112,6 @@ public class Client {
             throw new IllegalArgumentException("Parameter: <port>");
         }
         Client client = new Client(Integer.parseInt(args[0]));
-
+        System.exit(0);
     }
 }
