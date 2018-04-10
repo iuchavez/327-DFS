@@ -358,14 +358,18 @@ public class DFS {
 
     public String ls() throws Exception {
         String listOfFiles = "";
+        StringBuilder loFiles = new StringBuilder();
         Metadata md = readMetaData();
-        //FileSystem fSys = getFileSystem(reader);
-        //getFileSystem(reader);
+        LinkedList<mFile> files = new LinkedList<mFile>();
+        for(int i = 0; i<files.size(); i++){
+            loFiles.append(files.get(i).getName());
+            loFiles.append("\n");
+        }
 
         //for all files in metadata
         //  print filename
         //  append to listOfFiles
-        return listOfFiles;
+        return loFiles.toString();
     }
 
     public void touch() throws Exception {
@@ -379,7 +383,6 @@ public class DFS {
         if (in.hasNext()) {
             filename = in.next();
         }
-        in.close();
 
         // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
