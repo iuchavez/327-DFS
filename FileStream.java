@@ -36,4 +36,8 @@ public class FileStream extends InputStream implements Serializable {
     {
 	return size - currentPosition;
     }
+
+    public int getSize(){
+        return size;
+    }
 }

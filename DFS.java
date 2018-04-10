@@ -108,7 +108,7 @@ public class DFS {
     }*/
 
 
-    public Metadata readMetaData2()
+    public Metadata readMetaData()
     {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
@@ -123,7 +123,7 @@ public class DFS {
             Gson gson = new GsonBuilder().create();
             m = gson.fromJson(reader, Metadata.class);
         } catch (Exception e) {
-            m = new Metadata();
+            m = new Metadata(); //If metadata doesn't exist, Create one
             // m.setName("Isaac");
             //System.out.println("The successor could not be found");
             //e.printStackTrace();
@@ -134,60 +134,60 @@ public class DFS {
     }
 
     //Will need to throw exception?
-    public JsonElement readMetaData() {
-        ChordMessageInterface peer = null;
-        JsonReader jReader = null;
-        InputStream mdRaw = null;
-        JsonElement jElement = null;
-        JsonParser parsedJson = null;
-        long guid = md5("Metadata");
+    // public JsonElement readMetaData() {
+    //     ChordMessageInterface peer = null;
+    //     JsonReader jReader = null;
+    //     InputStream mdRaw = null;
+    //     JsonElement jElement = null;
+    //     JsonParser parsedJson = null;
+    //     long guid = md5("Metadata");
 
-        try {
-            peer = chord.locateSuccessor(guid);
-            chord.Print();
-            System.out.println("Closest Succesor: " + peer.getId());
-        } catch (Exception e) {
-            System.out.println("The successor could not be found");
-            //e.printStackTrace();
-        }
+    //     try {
+    //         peer = chord.locateSuccessor(guid);
+    //         chord.Print();
+    //         System.out.println("Closest Succesor: " + peer.getId());
+    //     } catch (Exception e) {
+    //         System.out.println("The successor could not be found");
+    //         //e.printStackTrace();
+    //     }
 
-        try {
-            mdRaw = peer.get(guid);
-            //System.out.println("This is the JSon after it is gotten from Chord" + getStringFromInputStream(mdRaw));
-        } //Retrieve InputStream from Chord
-        catch (IOException e) {
-            System.out.println("readMetaData() failed at the get function");
-            //e.printStackTrace();
-        }
+    //     try {
+    //         mdRaw = peer.get(guid);
+    //         //System.out.println("This is the JSon after it is gotten from Chord" + getStringFromInputStream(mdRaw));
+    //     } //Retrieve InputStream from Chord
+    //     catch (IOException e) {
+    //         System.out.println("readMetaData() failed at the get function");
+    //         //e.printStackTrace();
+    //     }
 
-        try {
+    //     try {
             
-            parsedJson = new JsonParser();
-            System.out.println("First line executed only.");
-            InputStreamReader jsonInputReader = new InputStreamReader(mdRaw);
-            System.out.println("Second line executed.");
-            jElement  = parsedJson.parse(jsonInputReader);
-            System.out.println("Third line executed.");
+    //         parsedJson = new JsonParser();
+    //         System.out.println("First line executed only.");
+    //         InputStreamReader jsonInputReader = new InputStreamReader(mdRaw);
+    //         System.out.println("Second line executed.");
+    //         jElement  = parsedJson.parse(jsonInputReader);
+    //         System.out.println("Third line executed.");
 
-            // parsedJson.parse(new InputStreamReader(mdRaw));
-            // jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
-            //System.out.println(getStringFromInputStream(mdRaw));
+    //         // parsedJson.parse(new InputStreamReader(mdRaw));
+    //         // jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
+    //         //System.out.println(getStringFromInputStream(mdRaw));
 
-        } catch (JsonIOException f) {
-            System.out.println("Read Metadata IO exception!");
-        } catch (JsonSyntaxException g) {
-            System.out.println("Read Metadata syntax error! ");
-        } catch (JsonParseException h) {
-            System.out.println("Not valid Json!");
-        }
+    //     } catch (JsonIOException f) {
+    //         System.out.println("Read Metadata IO exception!");
+    //     } catch (JsonSyntaxException g) {
+    //         System.out.println("Read Metadata syntax error! ");
+    //     } catch (JsonParseException h) {
+    //         System.out.println("Not valid Json!");
+    //     }
 
-        // JsonParser parsedJson = new JsonParser();
-        // parsedJson.parse(jReader);
+    //     // JsonParser parsedJson = new JsonParser();
+    //     // parsedJson.parse(jReader);
 
-        // System.out.println("Err Check @ 125 - readMetaData() before return");
-        // System.out.println(jElement.toString());
-        return jElement;
-    }
+    //     // System.out.println("Err Check @ 125 - readMetaData() before return");
+    //     // System.out.println(jElement.toString());
+    //     return jElement;
+    // }
 
     // convert InputStream to String
     public static String getStringFromInputStream(InputStream is) {
@@ -358,29 +358,38 @@ public class DFS {
 
     public String ls() throws Exception {
         String listOfFiles = "";
-        JsonElement reader = readMetaData();
-        //FileSystem fSys = getFileSystem(reader);
-        //getFileSystem(reader);
+        StringBuilder loFiles = new StringBuilder();
+        Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        for(int i = 0; i<files.size(); i++){
+            loFiles.append(files.get(i).getName());
+            loFiles.append("\n");
+        }
 
         //for all files in metadata
         //  print filename
         //  append to listOfFiles
-        return listOfFiles;
+        return loFiles.toString();
     }
 
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
-        Metadata md = readMetaData2();
-        // md.setLocation("CSULB");
-        writeMetaData(md);
+        Metadata md = readMetaData();
 
         String filename = "";
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
         }
-        in.close();
 
+        LinkedList<mFile> files = md.getFile();
+        mFile aFile = new mFile();
+        aFile.setName(filename);
+        files.add(aFile);
+        md.setFile(files);
+        // md.addFile(aFile);
+
+        writeMetaData(md);
         // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
         //add file to metadata
@@ -400,7 +409,8 @@ public class DFS {
         // Write Metadata 
     }
 
-    public Byte[] read(Scanner in) throws Exception {
+    public Page read(Scanner in) throws Exception {
+        Metadata md = readMetaData();
         String filename = "";
         int pageNumber = 0;
         System.out.print("Type in the file name: ");
@@ -410,6 +420,22 @@ public class DFS {
         System.out.print("Type in the page number: ");
         if (in.hasNextInt()) {
             pageNumber = in.nextInt();
+        }
+
+        LinkedList<mFile> files = md.getFile();
+        for(int i = 0; i<files.size(); i++){
+            mFile file = files.get(i);
+            if(file.getName() == filename){
+                if(pageNumber>file.getNumberOfPages())
+                    return null;
+                else{
+                    LinkedList<Page> pgs = file.getPage();
+                    pgs.get(pageNumber);
+                }
+            }
+            else if(i == (files.size()-1) && files.get(i).getName() != filename){
+                return null;
+            }
         }
 
         // TODO: read pageNumber from fileName
@@ -449,21 +475,44 @@ public class DFS {
     }
 
     public void append(Scanner in) throws Exception {
+        String filepath = "";
         String filename = "";
-        System.out.print("Type in the file name: ");
+        Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        mFile file = new mFile();
+        
+        System.out.print("Enter File to append to: ");
         if (in.hasNext()) {
             filename = in.next();
         }
+        System.out.print("Enter filepath for appending data: ");
+        if (in.hasNext()) {
+            filepath = in.next();
+        }
+        FileStream fStream = new FileStream(filepath);
+        long guid = md5(filepath);
 
-        //add size
-        Byte[] data = new Byte[10];
+        //Grab page from metadata and append a page to the last file
+        for(int i = 0; i<files.size(); i++){
+            // file = files.get(i);
+            if(files.get(i).getName() == filename){
+                file = files.remove(i);
+            }
+        }
+        Page pg = new Page();
+        pg.setGuid(guid);
+        pg.setSize(fStream.getSize());
+        pg.setNumber(file.getPage().size());
+        file.addPage(pg);
+        // file.setNumberOfPages(file.getNumberOfPages++);
+        // file.setPageSize(file.getPageSize()++);
+        // file.setSize(file.getSize+pg.getSize);
+        files.add(file);
+        md.setFile(files);
 
-        // TODO: append data to fileName. If it is needed, add a new page.
-        // Let guid be the last page in Metadata.filename
-        // ChordMessageInterface peer = chord.locateSuccessor(guid);
-        // peer.put(guid, data);
-        //add to page[pageSize]
-        // Write Metadata        
+        //Add Files to DFS
+        writeMetaData(md);
+        chord.put(guid, fStream);     
     }
 
 }
