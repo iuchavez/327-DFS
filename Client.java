@@ -61,7 +61,7 @@ public class Client {
                     dfs.ls();
                     break;
                 case 3:
-                    dfs.touch(in);
+                    dfs.touch();
                     break;
                 case 4:
                     dfs.delete(in);

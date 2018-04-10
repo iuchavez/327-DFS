@@ -368,7 +368,8 @@ public class DFS {
         return listOfFiles;
     }
 
-    public void touch(Metadata m) throws Exception {
+    public void touch() throws Exception {
+        Scanner in = new Scanner(System.in);
         Metadata md = readMetaData2();
         // md.setLocation("CSULB");
         writeMetaData(md);
@@ -378,6 +379,7 @@ public class DFS {
         if (in.hasNext()) {
             filename = in.next();
         }
+        in.close();
 
         // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
