@@ -4,9 +4,9 @@
  */
 
 public class Page{
-    int number;
-    int guid;
-    int size;
+    long number;
+    long guid;
+    long size;
 
     /**
  	* Constructs a page instance
@@ -23,7 +23,7 @@ public class Page{
  	* \param guid id
  	* \param sz size
  	*/
-    Page(int num, int gid, int sz){
+    Page(long num, long gid, long sz){
         number = num;
         guid = gid;
         size = sz;
@@ -33,35 +33,35 @@ public class Page{
  	* Returns number
  	* \return number
  	*/
-    int getNumber(){ return number; }
+    long getNumber(){ return number; }
 
     /**
  	* Returns guid
  	* \return guid
  	*/
-    int getGuid(){ return guid; }
+    long getGuid(){ return guid; }
 
     /**
  	* Returns page size
  	* \return page size
  	*/
-    int getSize(){ return size; }
+    long getSize(){ return size; }
 
     /**
  	* Sets page number
  	* \param num page number
  	*/
-    void setNumber(int num){ number = num; }
+    void setNumber(long num){ number = num; }
 
     /**
  	* Sets guid
  	* \param gid id
  	*/
-    void setGuid(int gid){ guid = gid; }
+    void setGuid(long gid){ guid = gid; }
 
     /**
  	* Sets page size
  	* \param sz size
  	*/
-    void setSize(int sz){ size = sz; }
+    void setSize(long sz){ size = sz; }
 }

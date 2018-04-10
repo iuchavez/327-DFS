@@ -7,9 +7,9 @@ import java.util.LinkedList;
 
 public class mFile {
     private String name;
-    private int numberOfPages;
-    private int pageSize;
-    private int size;
+    private long numberOfPages;
+    private long pageSize;
+    private long size;
     private LinkedList<Page> page;
 
     /**
@@ -49,19 +49,19 @@ public class mFile {
  	* Returns page count
  	* \return page count
  	*/
-    int getNumberOfPages(){ return numberOfPages; }
+    long getNumberOfPages(){ return numberOfPages; }
 
     /**
  	* Returns page size
  	* \return page size
  	*/
-    int getPageSize(){ return pageSize; }
+    long getPageSize(){ return pageSize; }
 
     /**
  	* Returns file size
  	* \return file size
  	*/
-    int getSize(){ return size; }
+    long getSize(){ return size; }
 
     /**
  	* Returns page
@@ -79,19 +79,19 @@ public class mFile {
  	* Sets page count
  	* \param numOPages page count
  	*/
-    void setNumberOfPages(int numOPages){ numberOfPages = numOPages; }
+    void setNumberOfPages(long numOPages){ numberOfPages = numOPages; }
 
     /**
  	* Sets page size
  	* \param pSize page size
  	*/
-    void setPageSize(int pSize){ pageSize = pSize; }
+    void setPageSize(long pSize){ pageSize = pSize; }
 
     /**
  	* Sets file size
  	* \param sz size
  	*/
-    void setSize(int sz){ size = sz; }
+    void setSize(long sz){ size = sz; }
 
     /**
  	* Sets pages

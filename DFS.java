@@ -358,7 +358,7 @@ public class DFS {
 
     public String ls() throws Exception {
         String listOfFiles = "";
-        JsonElement reader = readMetaData();
+        Metadata md = readMetaData();
         //FileSystem fSys = getFileSystem(reader);
         //getFileSystem(reader);
 
@@ -370,7 +370,7 @@ public class DFS {
 
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
-        Metadata md = readMetaData2();
+        Metadata md = readMetaData();
         // md.setLocation("CSULB");
         writeMetaData(md);
 
@@ -451,23 +451,38 @@ public class DFS {
     public void append(Scanner in) throws Exception {
         String filepath = "";
         String filename = "";
+        Metadata md = readMetaData();
+        mFile file = new mFile();
+        System.out.print("Where should the file be stored: ");
+        if (in.hasNext()) {
+            filename = in.next();
+        }
         System.out.print("Enter filepath: ");
         if (in.hasNext()) {
             filepath = in.next();
         }
-        FileReader fReader = new FileReader(filepath);
-        String splitFile[] = filepath.split("/");
-        long guid = md5(splitFile[splitFile.size()-1]);
+        FileStream fStream = new FileStream(filepath);
+        long guid = md5(filepath);
 
-        //add size
-        Byte[] data = new Byte[10];
+        //Grab page from metadata and append a page to the last file
+        Page pg = new Page();
+        pg.setGuid(guid);
+        LinkedList<mFile> files = md.getFile();
+        for(int i = 0; i<files.size(); i++){
+            // file = files.get(i);
+            if(files.get(i).getName() == filename){
+                // file = files.
 
-        // TODO: append data to fileName. If it is needed, add a new page.
-        // Let guid be the last page in Metadata.filename
-        // ChordMessageInterface peer = chord.locateSuccessor(guid);
-        // peer.put(guid, data);
-        //add to page[pageSize]
-        // Write Metadata        
+            }
+        }
+        file = files.pollLast();
+        file.addPage(pg);
+        files.add(file);
+        md.setFile(files);
+
+        //Add Files to DFS
+        writeMetaData(md);
+        chord.put(guid, fStream);     
     }
 
 }

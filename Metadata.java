@@ -35,4 +35,8 @@ public class Metadata{
 	 */
 	void addFile(mFile tFile){ file.add(tFile); }
 
+	mFile getLastFile(){
+		return file.peekLast();
+	}
+
 }
