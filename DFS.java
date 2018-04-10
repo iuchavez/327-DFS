@@ -400,7 +400,7 @@ public class DFS {
                 LinkedList<Page> pages = m.getPage();
                 for(Page p : pages){
                     peer = chord.locateSuccessor(p.getGuid());
-                    peer.delete(p.getGuid();
+                    peer.delete(p.getGuid());
                 }
                 md.removeFile(m);
             }
@@ -434,12 +434,20 @@ public class DFS {
         if (in.hasNext()) {
             filename = in.next();
         }
+        mFile ref = new mFile();
+
         Metadata md = readMetaData2();
         LinkedList<mFile> files = md.getFile();
+        LinkedList<Page> filePages = new LinkedList<Page>();
         for(mFile file: files){
-            if(file.getName().equals(filename) && file != null)
-                return f.getLast();
+            if(file.getName().equals(filename) && file != null){
+                ref = file;
+                
+            }
+                //get last page of a file
+                ref = file.getLast();
         }
+        //convert mFile object to Byte[]
         return null;
     }
 
@@ -451,11 +459,13 @@ public class DFS {
         }
 
         Metadata md = readMetaData2();
-        LinkedList<mFile> f = md.getFile();
+        LinkedList<mFile> files = md.getFile();
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null)
-                return f.getLast();
+                //get first page of a file
+                return file.getFirst();
         }
+        //convert mFile object to Byte[]
         return null;
     }
 
