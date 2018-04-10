@@ -123,7 +123,7 @@ public class DFS {
             Gson gson = new GsonBuilder().create();
             m = gson.fromJson(reader, Metadata.class);
         } catch (Exception e) {
-            m = new Metadata();
+            m = new Metadata(); //If metadata doesn't exist, Create one
             // m.setName("Isaac");
             //System.out.println("The successor could not be found");
             //e.printStackTrace();
@@ -375,8 +375,6 @@ public class DFS {
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
         Metadata md = readMetaData();
-        // md.setLocation("CSULB");
-        writeMetaData(md);
 
         String filename = "";
         System.out.print("Type in the file name: ");
@@ -384,6 +382,14 @@ public class DFS {
             filename = in.next();
         }
 
+        LinkedList<mFile> files = md.getFile();
+        mFile aFile = new mFile();
+        aFile.setName(filename);
+        files.add(aFile);
+        md.setFile(files);
+        // md.addFile(aFile);
+
+        writeMetaData(md);
         // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
         //add file to metadata
@@ -472,12 +478,14 @@ public class DFS {
         String filepath = "";
         String filename = "";
         Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
         mFile file = new mFile();
-        System.out.print("Where should the file be stored: ");
+        
+        System.out.print("Enter File to append to: ");
         if (in.hasNext()) {
             filename = in.next();
         }
-        System.out.print("Enter filepath: ");
+        System.out.print("Enter filepath for appending data: ");
         if (in.hasNext()) {
             filepath = in.next();
         }
@@ -485,16 +493,20 @@ public class DFS {
         long guid = md5(filepath);
 
         //Grab page from metadata and append a page to the last file
-        Page pg = new Page();
-        pg.setGuid(guid);
-        LinkedList<mFile> files = md.getFile();
         for(int i = 0; i<files.size(); i++){
             // file = files.get(i);
             if(files.get(i).getName() == filename){
                 file = files.remove(i);
             }
         }
+        Page pg = new Page();
+        pg.setGuid(guid);
+        pg.setSize(fStream.getSize());
+        pg.setNumber(file.getPage().size());
         file.addPage(pg);
+        // file.setNumberOfPages(file.getNumberOfPages++);
+        // file.setPageSize(file.getPageSize()++);
+        // file.setSize(file.getSize+pg.getSize);
         files.add(file);
         md.setFile(files);
 
