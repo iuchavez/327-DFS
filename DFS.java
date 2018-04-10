@@ -108,12 +108,12 @@ public class DFS {
     }*/
 
 
-    public myMetaData readMetaData2()
+    public Metadata readMetaData2()
     {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
         long guid = md5("Metadata");
-        myMetaData m;
+        Metadata m;
 
 
         try {
@@ -121,10 +121,10 @@ public class DFS {
             mdRaw = peer.get(guid);
             Reader reader =  new InputStreamReader(mdRaw);
             Gson gson = new GsonBuilder().create();
-            m = gson.fromJson(reader, myMetaData.class);
+            m = gson.fromJson(reader, Metadata.class);
         } catch (Exception e) {
-            m = new myMetaData();
-            m.setName("Isaac");
+            m = new Metadata();
+            // m.setName("Isaac");
             //System.out.println("The successor could not be found");
             //e.printStackTrace();
         }
@@ -294,7 +294,8 @@ public class DFS {
     }
     */
 
-    public void writeMetaData(myMetaData metadata) {
+    public void writeMetaData(Metadata metadata) {
+
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(metadata);
         
@@ -313,31 +314,31 @@ public class DFS {
         }
     }
 
-    /**
-     * To write out the index info that has been read from a file
-     * @param InputStream the file system info that is being written to the file system
-     */
-    public void writeMetaData(InputStream stream) {
+    // /**
+    //  * To write out the index info that has been read from a file
+    //  * @param InputStream the file system info that is being written to the file system
+    //  */
+    // public void writeMetaData(InputStream stream) {
 
-        System.out.print(getStringFromInputStream(stream));
+    //     System.out.print(getStringFromInputStream(stream));
 
-        long guid = md5("Metadata");
-        ChordMessageInterface peer = null;
+    //     long guid = md5("Metadata");
+    //     ChordMessageInterface peer = null;
         
 
-        try {
-            peer = chord.locateSuccessor(guid);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            peer.put(guid, stream);
-            // System.out.println("Closest Succesor: s" + peer.getId());
-        } catch (Exception e) {
-            //e.printStackTrace();
-            System.out.println("There was an error in the writeMetaData() method");
-        }
-    }
+    //     try {
+    //         peer = chord.locateSuccessor(guid);
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    //     try {
+    //         peer.put(guid, stream);
+    //         // System.out.println("Closest Succesor: s" + peer.getId());
+    //     } catch (Exception e) {
+    //         //e.printStackTrace();
+    //         System.out.println("There was an error in the writeMetaData() method");
+    //     }
+    // }
 
     public void mv(Scanner in) throws Exception {
         String oldname = "";
@@ -367,18 +368,18 @@ public class DFS {
         return listOfFiles;
     }
 
-    public void touch(Scanner in) throws Exception {
-        myMetaData md = readMetaData2();
-        md.setLocation("CSULB");
+    public void touch() throws Exception {
+        Scanner in = new Scanner(System.in);
+        Metadata md = readMetaData2();
+        // md.setLocation("CSULB");
         writeMetaData(md);
-
-
 
         String filename = "";
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
         }
+        in.close();
 
         // TODO: Create the file fileName by adding a new entry to the Metadata
         //create file and pass file name as parameter
