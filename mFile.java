@@ -31,7 +31,7 @@ public class mFile {
  	* \param sz file size
  	* \param pg pages
  	*/
-    mFile(String mFilename, int numPages, int pSize, int sz, LinkedList pg) {
+    mFile(String mFilename, int numPages, int pSize, int sz, LinkedList<Page> pg) {
         name = mFilename;
         numberOfPages = numPages;
         pageSize = pSize;
