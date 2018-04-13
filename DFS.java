@@ -363,8 +363,16 @@ public class DFS {
         if (in.hasNext()) {
             newname = in.next();
         }
-        // TODO:  Change the name in Metadata
-        // Write Metadata
+
+        Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        for(mFile file: files){
+            if(file.getName().equals(oldname)){
+                file.setName(newname);
+            }
+        }
+        
+        writeMetaData(md);
     }
 
     public String ls() throws Exception {
@@ -372,15 +380,12 @@ public class DFS {
         StringBuilder loFiles = new StringBuilder();
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
+
         for(int i = 0; i<files.size(); i++){
             loFiles.append(files.get(i).getName());
-            loFiles.append("\n");
-            
+            loFiles.append("\n");    
         }
 
-        //for all files in metadata
-        //  print filename
-        //  append to listOfFiles
         return loFiles.toString();
     }
 
