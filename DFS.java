@@ -121,13 +121,13 @@ public class DFS {
             mdRaw = peer.get(guid);
             Gson gson = new Gson();
 
-                String fileName = "./"+guid+"/327FS.json";
+                String fileName = "327FS.json";
                 FileOutputStream output = new FileOutputStream(fileName);
                 while (mdRaw.available() > 0)
                     output.write(mdRaw.read());
                 output.close();
 
-                FileReader fReader = new FileReader("./"+guid+"/327FS.json"); //Create a reader to view json file
+                FileReader fReader = new FileReader(fileName); //Create a reader to view json file
                 m = gson.fromJson(fReader, Metadata.class); // Retrieve FileSystem object from json file
              
             // Write in to 327.json
