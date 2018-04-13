@@ -58,7 +58,7 @@ public class Client {
                     dfs.join(in);
                     break;
                 case 2:
-                    dfs.ls();
+                    System.out.println(dfs.ls());
                     break;
                 case 3:
                     dfs.touch();
