@@ -1,9 +1,10 @@
+import java.io.Serializable;
 /** \file */
 
 /** \brief This file implements a DFS file page.
  */
 
-public class Page{
+public class Page implements Serializable{
     long number;
     long guid;
     long size;

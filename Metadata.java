@@ -1,10 +1,11 @@
 import java.util.*;
+import java.io.Serializable;
 /** \file */
 
 /** \brief This file implements a given distributed file system's metadata.
  */
 
-public class Metadata{
+public class Metadata implements Serializable{
     LinkedList<mFile> file;
 
     /**
@@ -17,6 +18,13 @@ public class Metadata{
  	* @param tFiles files
  	*/
     Metadata(LinkedList<mFile> tFiles){ file = tFiles; }
+
+
+	public void list()
+	{
+		System.out.println("Number of file" + file.size());			
+
+	} 
 
     /**
  	* Returns file

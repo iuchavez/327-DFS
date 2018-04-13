@@ -119,18 +119,30 @@ public class DFS {
         try {
             peer = chord.locateSuccessor(guid);
             mdRaw = peer.get(guid);
-            Reader reader =  new InputStreamReader(mdRaw);
-            Gson gson = new GsonBuilder().create();
-            m = gson.fromJson(reader, Metadata.class);
+            Gson gson = new Gson();
+
+                String fileName = "./"+guid+"/327FS.jason";
+                FileOutputStream output = new FileOutputStream(fileName);
+                while (mdRaw.available() > 0)
+                    output.write(mdRaw.read());
+                output.close();
+
+                FileReader fReader = new FileReader("./"+guid+"/327FS.jason"); //Create a reader to view json file
+                m = gson.fromJson(fReader, Metadata.class); // Retrieve FileSystem object from json file
+             
+            // Write in to 327.json
+            //Reader reader =  new InputStreamReader(mdRaw);
+            //Gson gson = new GsonBuilder().create();
+            
+            //m = gson.fromJson(reader, Metadata.class);
         } catch (Exception e) {
             m = new Metadata(); //If metadata doesn't exist, Create one
             // m.setName("Isaac");
             //System.out.println("The successor could not be found");
-            //e.printStackTrace();
+            e.printStackTrace();
         }
 
         return m;
-
     }
 
     //Will need to throw exception?
@@ -295,23 +307,22 @@ public class DFS {
     */
 
     public void writeMetaData(Metadata metadata) {
-
         Gson gson = new GsonBuilder().create();
-        String json = gson.toJson(metadata);
-        
+        FileWriter  writer = null;
+        long guid = md5("Metadata");
+        InputStream mdRaw = null;
+        Metadata m = new Metadata();
+        ChordMessageInterface peer = null;
+
         try {
-            FileWriter  writter = new FileWriter("327FS.json");
-            writter.write(json);
-            writter.close();
-            long guid = md5("Metadata");
-            ChordMessageInterface peer = null;
+            writer = new FileWriter("327FS.json");
+            writer.write(gson.toJson(metadata));
+            writer.close();
             peer = chord.locateSuccessor(guid);
             peer.put(guid, new FileStream("327FS.json"));
-        }catch(Exception e)
-        {
-
-            
-        }
+        }catch(Exception e){
+            e.printStackTrace();
+        } 
     }
 
     // /**
@@ -364,6 +375,7 @@ public class DFS {
         for(int i = 0; i<files.size(); i++){
             loFiles.append(files.get(i).getName());
             loFiles.append("\n");
+            
         }
 
         //for all files in metadata
@@ -375,6 +387,7 @@ public class DFS {
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
         Metadata md = readMetaData();
+        
 
         String filename = "";
         System.out.print("Type in the file name: ");
@@ -383,8 +396,13 @@ public class DFS {
         }
 
         LinkedList<mFile> files = md.getFile();
+        for(int i = 0; i<files.size(); i++){
+            System.out.println(files.get(i).toString());
+            System.out.println("Is this working?");
+        }
         mFile aFile = new mFile();
         aFile.setName(filename);
+        System.out.println(aFile.toString());
         files.add(aFile);
         md.setFile(files);
         // md.addFile(aFile);

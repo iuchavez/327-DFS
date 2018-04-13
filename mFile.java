@@ -1,11 +1,11 @@
 import java.util.LinkedList;
-
+import java.io.Serializable;
 /** \file */
 
 /** \brief This file implements a DFS file.
  */
 
-public class mFile {
+public class mFile implements Serializable{
     private String name;
     private long numberOfPages;
     private long pageSize;
@@ -99,4 +99,10 @@ public class mFile {
  	*/
     void setPage(LinkedList<Page> pg){ page = pg; }
     void addPage(Page pg){ page.add(pg); }
+    
+    @Override  
+    public String toString(){
+        super.toString();
+        return new String("Name: " + name);
+    }
 }
