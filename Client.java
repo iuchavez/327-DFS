@@ -81,6 +81,9 @@ public class Client {
                 case 9:
                     dfs.mv(in);
                     break;
+                case 10:
+                    System.out.println("Exit Client.");
+                    break;
                 default:
                     System.out.println("Invalid input.");
                     break;
@@ -89,7 +92,6 @@ public class Client {
             }
         }
 
-        System.out.println("Exit Client.");
     }
 
     public Metadata dummyData() {
@@ -112,6 +114,6 @@ public class Client {
             throw new IllegalArgumentException("Parameter: <port>");
         }
         Client client = new Client(Integer.parseInt(args[0]));
-
+        System.exit(0);
     }
 }
