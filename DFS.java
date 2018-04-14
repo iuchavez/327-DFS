@@ -218,6 +218,7 @@ public class DFS {
         Metadata md = readMetaData();
         LinkedList<mFile> f = md.getFile();
 
+        // Attempting to delete all page within a given file
         for(mFile m : f) {
             if(m.getName().contains(filename + "page")){
                 LinkedList<Page> pages = m.getPage();
@@ -229,6 +230,7 @@ public class DFS {
             }
         }
 
+        // Attempting to delete a given file
         for(mFile m : f) {
             if(m.getName().equals(filename)){
                 LinkedList<Page> pages = m.getPage();
