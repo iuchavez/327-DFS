@@ -219,6 +219,17 @@ public class DFS {
         LinkedList<mFile> f = md.getFile();
 
         for(mFile m : f) {
+            if(m.getName().contains(filename + "page")){
+                LinkedList<Page> pages = m.getPage();
+                for(Page p : pages){
+                    peer = chord.locateSuccessor(p.getGuid());
+                    peer.delete(p.getGuid());
+                }
+                md.removeFile(m);
+            }
+        }
+
+        for(mFile m : f) {
             if(m.getName().equals(filename)){
                 LinkedList<Page> pages = m.getPage();
                 for(Page p : pages){
@@ -245,9 +256,11 @@ public class DFS {
             pageNumber = in.nextInt();
         }
 
+        String pageFile = filename + "page" + pageNumber;
+        //search through metadata for this file
+
         LinkedList<mFile> files = md.getFile();
         Page p;
-        long pageGuid;
 
         for(mFile file : files){
             if(file.getName().equals(filename)){
@@ -257,7 +270,8 @@ public class DFS {
                 else
                 {
                     LinkedList<Page> pgs = file.getPage();
-                    pageGuid = pgs.get(pageNumber).getGuid();
+                    p = pgs.get(pageNumber);
+                    //print 
                 }
                 break;
             }
@@ -276,6 +290,8 @@ public class DFS {
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
         Page p = null;
+        int lastpage = files.size() - 1;
+        String pageFile = filename + "page" + lastpage;
 
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null){
@@ -297,6 +313,7 @@ public class DFS {
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
         Page p = null;
+        String pageFile = filename + "page0";
 
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null){
@@ -328,19 +345,20 @@ public class DFS {
         FileStream fStream = new FileStream(filepath);
         long guid = md5(filepath);
 
-        //Grab page from metadata and append a page to the last file
-        //add a new file to the metadata
         for(mFile f: files){
             if(f.getName().equals(filename)){
+                //Grab page from metadata and append a page to the last file
                 pg.setGuid(guid);
                 pg.setSize(fStream.getSize());
                 pg.setNumber(f.getPage().size());
                 f.addPage(pg);
 
+                //update appended file
                 f.setNumberOfPages(f.getNumberOfPages() + 1);
                 f.setPageSize(file.getPageSize() + 1);
                 f.setSize(file.getSize()+pg.getSize());
 
+                //add a new file to the metadata
                 file.setName(filename + "page" + pg.getNumber());
                 files.add(file);
                 md.setFile(files);
