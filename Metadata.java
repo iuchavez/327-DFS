@@ -43,6 +43,8 @@ public class Metadata implements Serializable{
 	 */
 	void addFile(mFile tFile){ file.add(tFile); }
 
+	void removeFile(mFile tFile){file.remove(tFile);}
+
 	mFile getLastFile(){
 		return file.peekLast();
 	}
