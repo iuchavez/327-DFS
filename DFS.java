@@ -86,7 +86,6 @@ public class DFS {
         String ip = in.next();
         int port = 8080;
 
-        //Port that is being connected to.
         if (!ip.equals(null)) {
             System.out.print("Type in the port: ");
             port = in.nextInt();
@@ -103,7 +102,6 @@ public class DFS {
         long guid = md5("Metadata");
         Metadata m;
 
-
         try {
             peer = chord.locateSuccessor(guid);
             mdRaw = peer.get(guid);
@@ -115,110 +113,16 @@ public class DFS {
                     output.write(mdRaw.read());
                 output.close();
 
-                FileReader fReader = new FileReader(fileName); //Create a reader to view json file
-                m = gson.fromJson(fReader, Metadata.class); // Retrieve FileSystem object from json file
+                //Convert json file to object
+                FileReader fReader = new FileReader(fileName);
+                m = gson.fromJson(fReader, Metadata.class);
         } catch (Exception e) {
-            m = new Metadata(); //If metadata doesn't exist, Create one
+            //If metadata doesn't exist, Create one
+            m = new Metadata();
             e.printStackTrace();
         }
 
         return m;
-    }
-
-    // convert InputStream to String
-    public static String getStringFromInputStream(InputStream is) {
-
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try {
-
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } catch (IOException e) {
-            //System.out.println("This happened in the getStringFromInputStream() method");
-            e.printStackTrace();
-        } 
-        // finally {
-        //     if (br != null) {
-        //         try {
-        //             br.close();
-        //         } catch (IOException e) {
-        //             //System.out.println("This happened in the getStringFromInputStream() method");
-        //             e.printStackTrace();
-        //         }
-        //     }
-        // }
-
-        return sb.toString();
-
-    }
-
-    public void getFileSystem(JsonReader jReader) {
-        // String json = "{\"metadata\":{\"file\":[{\"name\":\"LOLSMH\",\"numberOfPages\":1,\"pageSize\":10,\"size\":10,\"page\":[null,null]},{\"name\":\"Pheonix\",\"numberOfPages\":1,\"pageSize\":15,\"size\":15,\"page\":[null,null]}]}}";
-        // jReader = new JsonReader(new StringReader(json));
-        jReader.setLenient(true);
-
-        // try {
-
-            //System.out.println(jReader.peek());
-            // String aString = jReader.nextString();
-            // System.out.println(aString);
-            // System.out.println(jReader.peek());
-            // jReader.beginObject();
-            // aName = jReader.nextName();
-            // System.out.println(aName);
-            // System.out.println(jReader.peek());
-            // jReader.beginArray();
-            // System.out.println(jReader.peek());
-
-            // System.out.print();
-            // while(jsonReader.hasNext()){
-            //     JsonToken nextToken = jsonReader.peek();
-            //     System.out.println(nextToken);
-
-            //     if(JsonToken.BEGIN_ARRAY.equals(nextToken)){
-            //         jsonReader.beginArray();
-            //     }
-            //     if(JsonToken.BEGIN_OBJECT.equals(nextToken)){
-
-            //         jsonReader.beginObject();
-
-            //     } else if(JsonToken.NAME.equals(nextToken)){
-
-            //         String name  =  jsonReader.nextName();
-            //         System.out.println(name);
-
-            //     } else if(JsonToken.STRING.equals(nextToken)){
-
-            //         String value =  jsonReader.nextString();
-            //         System.out.println(value);
-
-            //     } else if(JsonToken.NUMBER.equals(nextToken)){
-
-            //         long value =  jsonReader.nextLong();
-            //         System.out.println(value);
-
-            //     }
-            // }
-
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
-
-        // FileSystem fSys = null;
-        // Gson gson = new Gson();
-
-        // try{
-        //     fSys = gson.fromJson(jReader, FileSystem.class); // Retrieve FileSystem object from json file
-        // }
-        // catch(Exception e){ e.printStackTrace();}
-
-        // return fSys;
     }
 
     public void writeMetaData(Metadata metadata) {
@@ -264,7 +168,7 @@ public class DFS {
         writeMetaData(md);
     }
 
-    public String ls() throws Exception {
+    public void ls() throws Exception {
         String listOfFiles = "";
         StringBuilder loFiles = new StringBuilder();
         Metadata md = readMetaData();
@@ -275,7 +179,7 @@ public class DFS {
             loFiles.append("\n");    
         }
 
-        return loFiles.toString();
+        System.out.println(loFiles.toString());
     }
 
     public void touch() throws Exception {
@@ -342,26 +246,23 @@ public class DFS {
         }
 
         LinkedList<mFile> files = md.getFile();
-        for(int i = 0; i<files.size(); i++){
-            mFile file = files.get(i);
-            if(file.getName() == filename){
-                if(pageNumber>file.getNumberOfPages())
+        Page p;
+        long pageGuid;
+
+        for(mFile file : files){
+            if(file.getName().equals(filename)){
+                if(pageNumber > file.getNumberOfPages()){
                     return null;
-                else{
-                    LinkedList<Page> pgs = file.getPage();
-                    pgs.get(pageNumber);
                 }
-            }
-            else if(i == (files.size()-1) && files.get(i).getName() != filename){
-                return null;
+                else
+                {
+                    LinkedList<Page> pgs = file.getPage();
+                    pageGuid = pgs.get(pageNumber).getGuid();
+                }
+                break;
             }
         }
 
-        // TODO: read pageNumber from fileName
-        //search for file name in file system
-        //if file found
-        //  return page[pageNumber]
-        //else
         return null;
     }
 
@@ -428,6 +329,7 @@ public class DFS {
         long guid = md5(filepath);
 
         //Grab page from metadata and append a page to the last file
+        //add a new file to the metadata
         for(mFile f: files){
             if(f.getName().equals(filename)){
                 pg.setGuid(guid);
@@ -439,6 +341,8 @@ public class DFS {
                 f.setPageSize(file.getPageSize() + 1);
                 f.setSize(file.getSize()+pg.getSize());
 
+                file.setName(filename + "page" + pg.getNumber());
+                files.add(file);
                 md.setFile(files);
                 break;
             }

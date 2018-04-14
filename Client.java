@@ -15,22 +15,14 @@ public class Client {
     DFS dfs;
 
     public Client(int p) throws Exception {
-        // Instantiate data member
         dfs = new DFS(p);
-
-        // rename the input
         int port = p;
 
-        // Initialize IO obejects to NULL
         FileWriter fWriter = null;
         FileReader fReader = null;
         FileStream jsonFileStream = null;
 
-        // Instantiate a GSON object
         Gson gson = new Gson();
-
-        // Populare FileSystem Object with dummy data
-        Metadata dummyData = dummyData();
 
         Scanner in = new Scanner(System.in);
         int input = 0;
@@ -58,7 +50,7 @@ public class Client {
                     dfs.join(in);
                     break;
                 case 2:
-                    System.out.println(dfs.ls());
+                    dfs.ls();
                     break;
                 case 3:
                     dfs.touch();
@@ -92,21 +84,6 @@ public class Client {
             }
         }
 
-    }
-
-    public Metadata dummyData() {
-        LinkedList<Page> page = new LinkedList<Page>(); //Blank Pages - Shows up as null
-        page.add(new Page());
-        
-        //Creating Song Files to be stored within metadata - Arbitrary Values
-        LinkedList<mFile> songs = new LinkedList<mFile>();
-        songs.add(new mFile("LOLSMH", 1, 10, 10, page));
-        songs.add(new mFile("Pheonix", 1, 15, 15, page));
-
-        //Creating Metadata objects and file strucuture object
-        Metadata mData = new Metadata(songs);
-        //FileSystem fileSystem = new FileSystem(mData);
-        return mData;
     }
 
     static public void main(String args[]) throws Exception {
