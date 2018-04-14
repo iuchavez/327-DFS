@@ -96,18 +96,6 @@ public class DFS {
         chord.Print();
     }
 
-    //QUESTION: do we ignore this JsonParser in favor of the GSON?
-    /*  public JSonParser readMetaData() throws Exception
-    {
-        JsonParser jsonParser _ null;
-        long guid = md5("Metadata");
-        ChordMessageInterface peer = chord.locateSuccessor(guid);
-        InputStream metadataraw = peer.get(guid);
-        // jsonParser = Json.createParser(metadataraw);
-        return jsonParser;
-    }*/
-
-
     public Metadata readMetaData()
     {
         ChordMessageInterface peer = null;
@@ -129,77 +117,13 @@ public class DFS {
 
                 FileReader fReader = new FileReader(fileName); //Create a reader to view json file
                 m = gson.fromJson(fReader, Metadata.class); // Retrieve FileSystem object from json file
-             
-            // Write in to 327.json
-            //Reader reader =  new InputStreamReader(mdRaw);
-            //Gson gson = new GsonBuilder().create();
-            
-            //m = gson.fromJson(reader, Metadata.class);
         } catch (Exception e) {
             m = new Metadata(); //If metadata doesn't exist, Create one
-            // m.setName("Isaac");
-            //System.out.println("The successor could not be found");
             e.printStackTrace();
         }
 
         return m;
     }
-
-    //Will need to throw exception?
-    // public JsonElement readMetaData() {
-    //     ChordMessageInterface peer = null;
-    //     JsonReader jReader = null;
-    //     InputStream mdRaw = null;
-    //     JsonElement jElement = null;
-    //     JsonParser parsedJson = null;
-    //     long guid = md5("Metadata");
-
-    //     try {
-    //         peer = chord.locateSuccessor(guid);
-    //         chord.Print();
-    //         System.out.println("Closest Succesor: " + peer.getId());
-    //     } catch (Exception e) {
-    //         System.out.println("The successor could not be found");
-    //         //e.printStackTrace();
-    //     }
-
-    //     try {
-    //         mdRaw = peer.get(guid);
-    //         //System.out.println("This is the JSon after it is gotten from Chord" + getStringFromInputStream(mdRaw));
-    //     } //Retrieve InputStream from Chord
-    //     catch (IOException e) {
-    //         System.out.println("readMetaData() failed at the get function");
-    //         //e.printStackTrace();
-    //     }
-
-    //     try {
-            
-    //         parsedJson = new JsonParser();
-    //         System.out.println("First line executed only.");
-    //         InputStreamReader jsonInputReader = new InputStreamReader(mdRaw);
-    //         System.out.println("Second line executed.");
-    //         jElement  = parsedJson.parse(jsonInputReader);
-    //         System.out.println("Third line executed.");
-
-    //         // parsedJson.parse(new InputStreamReader(mdRaw));
-    //         // jReader = new JsonReader(new InputStreamReader(mdRaw, "UTF-8"));
-    //         //System.out.println(getStringFromInputStream(mdRaw));
-
-    //     } catch (JsonIOException f) {
-    //         System.out.println("Read Metadata IO exception!");
-    //     } catch (JsonSyntaxException g) {
-    //         System.out.println("Read Metadata syntax error! ");
-    //     } catch (JsonParseException h) {
-    //         System.out.println("Not valid Json!");
-    //     }
-
-    //     // JsonParser parsedJson = new JsonParser();
-    //     // parsedJson.parse(jReader);
-
-    //     // System.out.println("Err Check @ 125 - readMetaData() before return");
-    //     // System.out.println(jElement.toString());
-    //     return jElement;
-    // }
 
     // convert InputStream to String
     public static String getStringFromInputStream(InputStream is) {
@@ -297,15 +221,6 @@ public class DFS {
         // return fSys;
     }
 
-    /*public void writeMetaData(InputStream stream) throws Exception
-    {
-       JsonParser jsonParser _ null;
-       long guid = md5("Metadata");
-       ChordMessageInterface peer = chord.locateSuccessor(guid);
-       peer.put(guid, stream);
-    }
-    */
-
     public void writeMetaData(Metadata metadata) {
         Gson gson = new GsonBuilder().create();
         FileWriter  writer = null;
@@ -324,32 +239,6 @@ public class DFS {
             e.printStackTrace();
         } 
     }
-
-    // /**
-    //  * To write out the index info that has been read from a file
-    //  * @param InputStream the file system info that is being written to the file system
-    //  */
-    // public void writeMetaData(InputStream stream) {
-
-    //     System.out.print(getStringFromInputStream(stream));
-
-    //     long guid = md5("Metadata");
-    //     ChordMessageInterface peer = null;
-        
-
-    //     try {
-    //         peer = chord.locateSuccessor(guid);
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-    //     try {
-    //         peer.put(guid, stream);
-    //         // System.out.println("Closest Succesor: s" + peer.getId());
-    //     } catch (Exception e) {
-    //         //e.printStackTrace();
-    //         System.out.println("There was an error in the writeMetaData() method");
-    //     }
-    // }
 
     public void mv(Scanner in) throws Exception {
         String oldname = "";
@@ -539,20 +428,21 @@ public class DFS {
         long guid = md5(filepath);
 
         //Grab page from metadata and append a page to the last file
-        for(int i = 0; i<files.size(); i++){
-            if(files.get(i).getName().equals(filename)){
-                file = files.get(i);
+        for(mFile f: files){
+            if(f.getName().equals(filename)){
                 pg.setGuid(guid);
                 pg.setSize(fStream.getSize());
-                pg.setNumber(file.getPage().size());
-                file.addPage(pg);
+                pg.setNumber(f.getPage().size());
+                f.addPage(pg);
+
+                f.setNumberOfPages(f.getNumberOfPages() + 1);
+                f.setPageSize(file.getPageSize() + 1);
+                f.setSize(file.getSize()+pg.getSize());
+
+                md.setFile(files);
+                break;
             }
         }
-        // file.setNumberOfPages(file.getNumberOfPages++);
-        // file.setPageSize(file.getPageSize()++);
-        // file.setSize(file.getSize+pg.getSize);
-        //files.add(file);
-        //md.setFile(files);
 
         //Add Files to DFS
         writeMetaData(md);
