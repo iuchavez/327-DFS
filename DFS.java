@@ -357,11 +357,12 @@ public class DFS {
 
                 //update appended file
                 f.setNumberOfPages(f.getNumberOfPages() + 1);
-                f.setPageSize(file.getPageSize() + 1);
-                f.setSize(file.getSize()+pg.getSize());
+                f.setPageSize(pg.getSize());
+                f.setSize(f.getSize()+pg.getSize());
 
                 //add a new file to the metadata
                 file.setName(filename + "page" + pg.getNumber());
+                file.setSize(pg.getSize());
                 files.add(file);
                 md.setFile(files);
                 break;
