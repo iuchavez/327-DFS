@@ -170,16 +170,17 @@ public class DFS {
 
     public void ls() throws Exception {
         String listOfFiles = "";
-        StringBuilder loFiles = new StringBuilder();
+        // StringBuilder loFiles = new StringBuilder();
+
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
 
         for(int i = 0; i<files.size(); i++){
-            loFiles.append(files.get(i).getName());
-            loFiles.append("\n");    
+            listOfFiles = listOfFiles + files.get(i).getName();
+            listOfFiles = listOfFiles + "\n";  
         }
 
-        System.out.println(loFiles.toString());
+        System.out.println(listOfFiles);
     }
 
     public void touch() throws Exception {
