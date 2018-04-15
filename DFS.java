@@ -196,7 +196,6 @@ public class DFS {
         LinkedList<mFile> files = md.getFile();
         for(int i = 0; i<files.size(); i++){
             System.out.println(files.get(i).toString());
-            System.out.println("Is this working?");
         }
         mFile aFile = new mFile();
         aFile.setName(filename);
@@ -245,10 +244,14 @@ public class DFS {
         writeMetaData(md);
     }
 
-    public Page read(Scanner in) throws Exception {
+    public InputStream read(Scanner in) throws Exception {
         Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
         String filename = "";
         int pageNumber = 0;
+        Page p = null;
+        InputStream iStream = null;
+
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
@@ -259,23 +262,21 @@ public class DFS {
         }
 
         String pageFile = filename + "page" + pageNumber;
+        
         //search through metadata for this file
-
-        LinkedList<mFile> files = md.getFile();
-        Page p;
-
         for(mFile file : files){
             if(file.getName().equals(filename)){
-                if(pageNumber > file.getNumberOfPages()){
+                if(pageNumber > file.getNumberOfPages()){   //number logistics check
                     return null;
                 }
-                else
+                else    // finds the number
                 {
                     LinkedList<Page> pgs = file.getPage();
                     p = pgs.get(pageNumber);
-                    //print 
+                    System.out.println(p.toString());
+                    iStream = chord.get(p.getGuid());
+                    return iStream;
                 }
-                break;
             }
         }
 

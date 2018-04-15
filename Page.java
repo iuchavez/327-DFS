@@ -65,4 +65,9 @@ public class Page implements Serializable{
  	* \param sz size
  	*/
     void setSize(long sz){ size = sz; }
+    
+    @Override
+    public String toString(){
+        return "Number: " + number +"\nGUID: " + guid + "\nSize(bytes): " + size;
+    }
 }

@@ -59,7 +59,8 @@ public class Client {
                     dfs.delete(in);
                     break;
                 case 5:
-                    dfs.read(in);
+                    InputStream iStream = dfs.read(in);
+                    if(iStream == null){System.out.println("Page doesn't exist.");}
                     break;
                 case 6:
                     dfs.tail(in);
