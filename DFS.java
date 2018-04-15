@@ -361,11 +361,11 @@ public class DFS {
                 f.setPageSize(pg.getSize());
                 f.setSize(f.getSize()+pg.getSize());
 
-                //add a new file to the metadata
-                file.setName(filename + "page" + pg.getNumber());
-                file.setSize(pg.getSize());
-                files.add(file);
-                md.setFile(files);
+                // //add a new file to the metadata
+                // file.setName(filename + "page" + pg.getNumber());
+                // file.setSize(pg.getSize());
+                // files.add(file);
+                // md.setFile(files);
                 break;
             }
         }
