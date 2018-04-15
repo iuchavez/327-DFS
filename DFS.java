@@ -208,41 +208,45 @@ public class DFS {
         writeMetaData(md);
     }
 
-    public void delete(Scanner in) throws Exception {
+    public void delete() throws Exception {
+        Scanner in = new Scanner(System.in);
         String filename = "";
-        System.out.print("Type in the file name: ");
-        if (in.hasNext()) {
-            filename = in.next();
-        }
-        
         ChordMessageInterface peer = null;
         Metadata md = readMetaData();
-        LinkedList<mFile> f = md.getFile();
+        LinkedList<mFile> files = md.getFile();
+        LinkedList<Page> pages = null;
+        boolean found = false;
+        mFile fileToDelete = null;
+
+        // Prompt user for file name input
+        System.out.print("Type in the file name: ");
+        if (in.hasNext()) {
+            filename = in.nextLine();
+        }
 
         // Attempting to delete all page within a given file
-        for(mFile m : f) {
-            if(m.getName().contains(filename + "page")){
-                LinkedList<Page> pages = m.getPage();
-                for(Page p : pages){
-                    peer = chord.locateSuccessor(p.getGuid());
-                    peer.delete(p.getGuid());
-                }
-                md.removeFile(m);
+        for(mFile f : files) {
+            if(f.getName().equals(filename)){
+                fileToDelete = f;
+                found = true;
             }
         }
-
-        // Attempting to delete a given file
-        for(mFile m : f) {
-            if(m.getName().equals(filename)){
-                LinkedList<Page> pages = m.getPage();
-                for(Page p : pages){
-                    peer = chord.locateSuccessor(p.getGuid());
-                    peer.delete(p.getGuid());
-                }
-                md.removeFile(m);
-            }
+        
+        // If it is not found then return to calling method
+        if(!found){
+            System.out.println("That file was not found");
+            return;
         }
 
+        // Delete all pages associated with that file
+        pages = fileToDelete.getPage();
+        for(Page p : pages){
+            peer = chord.locateSuccessor(p.getGuid());
+            peer.delete(p.getGuid());
+        }
+        md.removeFile(fileToDelete);
+
+        // Write the metadata back to the authoritative index
         writeMetaData(md);
     }
 
@@ -328,6 +332,10 @@ public class DFS {
         return null;
     }
 
+    /**
+    * This method is intended to add data to the DFS and to associate that data
+    * to a file.
+    **/
     public void append() throws Exception {
         Scanner in = new Scanner(System.in);
         String filepath = "";
@@ -381,7 +389,7 @@ public class DFS {
         fileToAppend.setPageSize(pg.getSize());
         fileToAppend.setSize(fileToAppend.getSize()+pg.getSize());
 
-        //Add Files to DFS
+        //Add Files to DFS and write updated metadata back to the authoritative index
         writeMetaData(md);
         chord.put(guid, fStream);     
     }
