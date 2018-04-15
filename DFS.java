@@ -334,16 +334,19 @@ public class DFS {
         String filename = "";
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
-        mFile file = new mFile();
         Page pg = new Page();
         boolean found = false;
         mFile fileToAppend = null;
+        long guid = 0;
+        FileStream fStream = null;
 
+        // Prompt user for file name
         System.out.print("Enter File to append to: ");
         if (in.hasNext()) {
-            filename = in.next();
+            filename = in.nextLine();
         }
 
+        // Search for the file linearly
         for(mFile f: files){
             if(f.getName().equals(filename)){
                 found = true;
@@ -351,20 +354,23 @@ public class DFS {
             }
         }
 
+        // If the file was not found then return to the calling method
         if(!found){
             System.out.print("The file was now found.");
             return;
         }
 
-        System.out.print("Enter filepath for appending data (default: 327FS.json): ");
+        // Prompt user to enter the path of the file you want to append
+        System.out.print("Enter path to the file you want to append: ");
         if (in.hasNext()) {
-            filepath = in.next();
+            filepath = in.nextLine();
         }
 
-        FileStream fStream = new FileStream(filepath);
-        long guid = md5(filepath);
-
+        // Read in the data that will be appended
+        fStream = new FileStream(filepath);
+        
         //Grab page from metadata and append a page to the last file
+        guid = md5(filepath);
         pg.setGuid(guid);
         pg.setSize(fStream.getSize());
         pg.setNumber(fileToAppend.getPage().size());
