@@ -91,7 +91,11 @@ public class DFS {
             port = in.nextInt();
         }
         System.out.println(ip + " Port "  + port);
-        chord.joinRing(ip, port);
+        try {
+            chord.joinRing(ip, port);
+        } catch (IllegalArgumentException e) {
+            System.out.println("That was not a valid port on the DFS");
+        }
         chord.Print();
     }
 
@@ -149,12 +153,12 @@ public class DFS {
         String newname = "";
         System.out.print("Type in the old name for the metadata: ");
         if (in.hasNext()) {
-            oldname = in.next();
+            oldname = in.nextLine();
         }
 
         System.out.print("Type in the new name for the metadata: ");
         if (in.hasNext()) {
-            newname = in.next();
+            newname = in.nextLine();
         }
 
         Metadata md = readMetaData();
@@ -186,19 +190,24 @@ public class DFS {
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
         Metadata md = readMetaData();
+        LinkedList<mFile> files = null;
         
-
         String filename = "";
+        
+        // Take input from the user for file name
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
-            filename = in.next();
+            filename = in.nextLine();
         }
 
-        LinkedList<mFile> files = md.getFile();
+        // this appears to be test code only.
+        files = md.getFile();
         for(int i = 0; i<files.size(); i++){
             System.out.println(files.get(i).toString());
             System.out.println("Is this working?");
         }
+
+        // 
         mFile aFile = new mFile();
         aFile.setName(filename);
         System.out.println(aFile.toString());
@@ -364,7 +373,7 @@ public class DFS {
 
         // If the file was not found then return to the calling method
         if(!found){
-            System.out.print("The file was now found.");
+            System.out.print("The file was not found.");
             return;
         }
 
