@@ -104,26 +104,30 @@ public class DFS {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
         long guid = md5("Metadata");
-        Metadata m;
+        Metadata m = null;
 
         try {
             peer = chord.locateSuccessor(guid);
             mdRaw = peer.get(guid);
             Gson gson = new Gson();
 
-                String fileName = "327FS.json";
-                FileOutputStream output = new FileOutputStream(fileName);
-                while (mdRaw.available() > 0)
-                    output.write(mdRaw.read());
-                output.close();
+            String fileName = "327FS.json";
+            FileOutputStream output = new FileOutputStream(fileName);
+            while (mdRaw.available() > 0)
+                output.write(mdRaw.read());
+            output.close();
 
-                //Convert json file to object
-                FileReader fReader = new FileReader(fileName);
-                m = gson.fromJson(fReader, Metadata.class);
-        } catch (Exception e) {
+            //Convert json file to object
+            FileReader fReader = new FileReader(fileName);
+            m = gson.fromJson(fReader, Metadata.class);
+        } catch (RemoteException e) {
             //If metadata doesn't exist, Create one
             m = new Metadata();
-            e.printStackTrace();
+            System.out.println("No metadata on DFS. Please use touch to initialize the metadata");
+            // e.printStackTrace();
+        } catch (IOException f) {
+            System.out.println("There was an IO Exception");
+            f.printStackTrace();
         }
 
         return m;
