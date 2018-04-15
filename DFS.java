@@ -328,18 +328,34 @@ public class DFS {
         return null;
     }
 
-    public void append(Scanner in) throws Exception {
+    public void append() throws Exception {
+        Scanner in = new Scanner(System.in);
         String filepath = "";
         String filename = "";
         Metadata md = readMetaData();
         LinkedList<mFile> files = md.getFile();
         mFile file = new mFile();
         Page pg = new Page();
+        boolean found = false;
+        mFile fileToAppend = null;
 
         System.out.print("Enter File to append to: ");
         if (in.hasNext()) {
             filename = in.next();
         }
+
+        for(mFile f: files){
+            if(f.getName().equals(filename)){
+                found = true;
+                fileToAppend = f;
+            }
+        }
+
+        if(!found){
+            System.out.print("The file was now found.");
+            return;
+        }
+
         System.out.print("Enter filepath for appending data (default: 327FS.json): ");
         if (in.hasNext()) {
             filepath = in.next();
@@ -348,27 +364,16 @@ public class DFS {
         FileStream fStream = new FileStream(filepath);
         long guid = md5(filepath);
 
-        for(mFile f: files){
-            if(f.getName().equals(filename)){
-                //Grab page from metadata and append a page to the last file
-                pg.setGuid(guid);
-                pg.setSize(fStream.getSize());
-                pg.setNumber(f.getPage().size());
-                f.addPage(pg);
+        //Grab page from metadata and append a page to the last file
+        pg.setGuid(guid);
+        pg.setSize(fStream.getSize());
+        pg.setNumber(fileToAppend.getPage().size());
+        fileToAppend.addPage(pg);
 
-                //update appended file
-                f.setNumberOfPages(f.getNumberOfPages() + 1);
-                f.setPageSize(pg.getSize());
-                f.setSize(f.getSize()+pg.getSize());
-
-                // //add a new file to the metadata
-                // file.setName(filename + "page" + pg.getNumber());
-                // file.setSize(pg.getSize());
-                // files.add(file);
-                // md.setFile(files);
-                break;
-            }
-        }
+        //update appended file
+        fileToAppend.setNumberOfPages(fileToAppend.getNumberOfPages() + 1);
+        fileToAppend.setPageSize(pg.getSize());
+        fileToAppend.setSize(fileToAppend.getSize()+pg.getSize());
 
         //Add Files to DFS
         writeMetaData(md);
