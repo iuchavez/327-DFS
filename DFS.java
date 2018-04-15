@@ -91,7 +91,11 @@ public class DFS {
             port = in.nextInt();
         }
         System.out.println(ip + " Port "  + port);
-        chord.joinRing(ip, port);
+        try {
+            chord.joinRing(ip, port);
+        } catch (IllegalArgumentException e) {
+            System.out.println("That was not a valid port on the DFS");
+        }
         chord.Print();
     }
 
@@ -100,26 +104,30 @@ public class DFS {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
         long guid = md5("Metadata");
-        Metadata m;
+        Metadata m = null;
 
         try {
             peer = chord.locateSuccessor(guid);
             mdRaw = peer.get(guid);
             Gson gson = new Gson();
 
-                String fileName = "327FS.json";
-                FileOutputStream output = new FileOutputStream(fileName);
-                while (mdRaw.available() > 0)
-                    output.write(mdRaw.read());
-                output.close();
+            String fileName = "327FS.json";
+            FileOutputStream output = new FileOutputStream(fileName);
+            while (mdRaw.available() > 0)
+                output.write(mdRaw.read());
+            output.close();
 
-                //Convert json file to object
-                FileReader fReader = new FileReader(fileName);
-                m = gson.fromJson(fReader, Metadata.class);
-        } catch (Exception e) {
+            //Convert json file to object
+            FileReader fReader = new FileReader(fileName);
+            m = gson.fromJson(fReader, Metadata.class);
+        } catch (RemoteException e) {
             //If metadata doesn't exist, Create one
             m = new Metadata();
-            e.printStackTrace();
+            System.out.println("No metadata on DFS. Please use touch to initialize the metadata");
+            // e.printStackTrace();
+        } catch (IOException f) {
+            System.out.println("There was an IO Exception");
+            f.printStackTrace();
         }
 
         return m;
@@ -149,12 +157,12 @@ public class DFS {
         String newname = "";
         System.out.print("Type in the old name for the metadata: ");
         if (in.hasNext()) {
-            oldname = in.next();
+            oldname = in.nextLine();
         }
 
         System.out.print("Type in the new name for the metadata: ");
         if (in.hasNext()) {
-            newname = in.next();
+            newname = in.nextLine();
         }
 
         Metadata md = readMetaData();
@@ -186,19 +194,24 @@ public class DFS {
     public void touch() throws Exception {
         Scanner in = new Scanner(System.in);
         Metadata md = readMetaData();
+        LinkedList<mFile> files = null;
         
-
         String filename = "";
+        
+        // Take input from the user for file name
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
-            filename = in.next();
+            filename = in.nextLine();
         }
 
-        LinkedList<mFile> files = md.getFile();
+        // this appears to be test code only.
+        files = md.getFile();
         for(int i = 0; i<files.size(); i++){
             System.out.println(files.get(i).toString());
             System.out.println("Is this working?");
         }
+
+        // 
         mFile aFile = new mFile();
         aFile.setName(filename);
         System.out.println(aFile.toString());
@@ -364,7 +377,7 @@ public class DFS {
 
         // If the file was not found then return to the calling method
         if(!found){
-            System.out.print("The file was now found.");
+            System.out.print("The file was not found.");
             return;
         }
 
