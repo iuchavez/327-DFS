@@ -56,7 +56,7 @@ public class Client {
                     dfs.touch();
                     break;
                 case 4:
-                    dfs.delete(in);
+                    dfs.delete();
                     break;
                 case 5:
                     InputStream iStream = dfs.read(in);
@@ -69,7 +69,7 @@ public class Client {
                     dfs.head(in);
                     break;
                 case 8:
-                    dfs.append(in);
+                    dfs.append();
                     break;
                 case 9:
                     dfs.mv(in);
