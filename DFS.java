@@ -123,7 +123,7 @@ public class DFS {
         } catch (RemoteException e) {
             //If metadata doesn't exist, Create one
             m = new Metadata();
-            System.out.println("No metadata on DFS. Please use touch to initialize the metadata");
+            System.out.println("No metadata on DFS. A new one has been created.");
             // e.printStackTrace();
         } catch (IOException f) {
             System.out.println("There was an IO Exception");
@@ -301,8 +301,9 @@ public class DFS {
         return null;
     }
 
-    public Byte[] tail(Scanner in) throws Exception {
+    public InputStream tail(Scanner in) throws Exception {
         String filename = "";
+        InputStream iStream = null;
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
@@ -317,15 +318,18 @@ public class DFS {
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null){
                 p = file.getPage().getLast();
-                break;
+                System.out.println(p.toString());
+                iStream = chord.get(p.getGuid());
+                return iStream;
             }
         }
 
         return null;
     }
 
-    public Byte[] head(Scanner in) throws Exception {
+    public InputStream head(Scanner in) throws Exception {
         String filename = "";
+        InputStream iStream = null;
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
@@ -339,7 +343,9 @@ public class DFS {
         for(mFile file: files){
             if(file.getName().equals(filename) && file != null){
                 p = file.getPage().getFirst();
-                break;
+                System.out.println(p.toString());
+                iStream = chord.get(p.getGuid());
+                return iStream;
             }
         }
 
@@ -387,20 +393,24 @@ public class DFS {
         if (in.hasNext()) {
             filepath = in.nextLine();
         }
-
-        // Read in the data that will be appended
-        fStream = new FileStream(filepath);
         
+        // Read in the data that will be appended
+        try{
+            fStream = new FileStream(filepath);
+            guid = md5(filepath);
+            pg.setGuid(guid);
+            pg.setSize(fStream.getSize());
+            pg.setNumber(fileToAppend.getPage().size());
+        } catch (FileNotFoundException e){
+            System.out.println("File was not found.");
+            return;
+        }
         //Grab page from metadata and append a page to the last file
-        guid = md5(filepath);
-        pg.setGuid(guid);
-        pg.setSize(fStream.getSize());
-        pg.setNumber(fileToAppend.getPage().size());
         fileToAppend.addPage(pg);
 
         //update appended file
         fileToAppend.setNumberOfPages(fileToAppend.getNumberOfPages() + 1);
-        fileToAppend.setPageSize(pg.getSize());
+        fileToAppend.setPageSize(fileToAppend.getSize());
         fileToAppend.setSize(fileToAppend.getSize()+pg.getSize());
 
         //Add Files to DFS and write updated metadata back to the authoritative index
