@@ -415,7 +415,8 @@ public class DFS {
 
         //Add Files to DFS and write updated metadata back to the authoritative index
         writeMetaData(md);
-        chord.put(guid, fStream);     
+        chord.put(guid, fStream); 
+        System.out.print("File was successfully written.");    
     }
 
 }
