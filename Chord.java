@@ -276,4 +276,98 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	       System.out.println("Cannot retrive id");
         }
     }
+
+Long n = 0;
+	Set<Long> set;
+
+	//the following function is intended to be in DFS, add later
+	public void runMapReduce(InputStream file){ // may not be inputstream
+		Context context = new Context();
+		MapReduceInterface mapreduce = new MapReduceInterface();
+		//for(Page p: metafile.file)
+		//	context.add(p);
+		//	peer = process to store page
+		//	peer.mapContext(page,mapreduce,context);
+		//	if(context.hasCompleted())
+		//		reduceContext(guid, mapreduce, context);
+		//wait until context.hasCompleted()
+	}
+
+
+	public void setWorkingPeer(Long page) { set.add(page); } 
+
+	public void completePeer(Long page, Long n) throws RemoteException {
+		this.n += n;
+		set.remove(page);
+	}
+
+	public boolean isPhaseCompleted(){
+		if(set.isEmpty())
+			return true;
+		return false;
+	}
+
+	public void reduceContext(Long page, ReduceInterface reducer, Context context) throws RemoteException{
+		//TODO
+		//if source != guid
+		//call context.add(guid)
+		//successor.reduceContext(source, reducer, context)
+		//create new thread
+		//read BReduce in order
+		//reducer.reduce(key,value[],context)
+		//when complete, context.complete(guid,n)
+	}
+
+	public void mapContext(Long page, MapReduceInterface mapper, Context context) throws RemoteException{
+		//TODO
+		//open page
+		//read line by line
+		//execute mapper.map(key,value,context)
+		//once read, context.completePeer(page, n)
+		//create new thread
+	}
+
+    public void emitMap(Long key, String value) throws RemoteException
+    {
+    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+    	{
+    	// insert in the BMap. Allows repetition
+    		if (BMap.containsKey(key))
+    		{
+    			List< String > list = new List< String >();
+				BMap.put(key,list);
+			} 
+			BMap.put(key).add(value);
+		}
+		else
+		{
+			ChordMessageInterface peer = this.locateSuccessor(key);
+			peer.emitMap(key, value);
+		}
+}
+
+	public void emitReduce(Long page, String value) throws RemoteException
+	{ 
+		if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+		{
+			// innsert in the BReduce
+			BReduce(key, value);
+		} 
+		else
+		{
+			ChordMessageInterface peer = this.locateSuccessor(key);
+			peer.emitReduce(key, value);
+		}
+	}
+
+	public void map(Long key, String value) throws IOException {
+		//for each word in value
+		emit(md5(word),word+":"+1);
+	}
+
+	public void reduce(Long key, String values[]) throws IOException {
+		word = values[0].split(":")[0];
+		emit(key, word + ":" + values.length);
+	}
+
 }
