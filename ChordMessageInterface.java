@@ -20,16 +20,18 @@ public interface ChordMessageInterface extends Remote
     //context inferface functions
     public void setWorkingPeer(Long page);
 	public void completePeer(Long page, Long n) throws RemoteException;
-	public boolean isPhaseCompleted();
-	public void reduceContext(Long source, ReduceInterface reducer,
+    public boolean isPhaseCompleted();
+    
+	public void reduceContext(Long source, MapReduceInterface reducer,
 	ChordMessageInterface context) throws RemoteException;
 	public void mapContext(Long page, MapReduceInterface mapper,
-	ChordMessageInterface context) throws RemoteException;
+    
+    ChordMessageInterface context) throws RemoteException;
 
 	public void emitMap(Long key, String value) throws RemoteException;
 	public void emitReduce(Long page, String value) throws RemoteException;
 
-	//mapper functions
+	//mapper functions goes into MapReduceInterface we need to impement them in another file totally independent, testing classes
 	public void map(Long key, String value, ChordMessageInterface context);
 	public void reduce(Long key, List< String > value, ChordMessageInterface context);
 }
