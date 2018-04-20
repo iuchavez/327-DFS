@@ -31,7 +31,4 @@ public interface ChordMessageInterface extends Remote
 	public void emitMap(Long key, String value) throws RemoteException;
 	public void emitReduce(Long page, String value) throws RemoteException;
 
-	//mapper functions goes into MapReduceInterface we need to impement them in another file totally independent, testing classes
-	public void map(Long key, String value, ChordMessageInterface context);
-	public void reduce(Long key, List< String > value, ChordMessageInterface context);
 }
