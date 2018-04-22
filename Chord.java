@@ -16,6 +16,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     ChordMessageInterface[] finger;
     int nextFinger;
     long guid;   		// GUID (i)
+    TreeMap BMap, bReduceTreeMap;
     
     
     public Boolean isKeyInSemiCloseInterval(long key, long key1, long key2)
@@ -307,7 +308,7 @@ Long n = 0;
 		return false;
 	}
 
-	public void reduceContext(Long page, ReduceInterface reducer, Context context) throws RemoteException{
+	public void reduceContext(Long page, MapReduceInterface reducer, Context context) throws RemoteException{
 		//TODO
 		//if source != guid
 		//call context.add(guid)

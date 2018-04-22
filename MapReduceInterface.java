@@ -1,4 +1,4 @@
-import java.util.*;
+  import java.util.*;
 
 public interface MapReduceInterface {
 	//mapper functions goes into MapReduceInterface we need to impement them in another file totally independent, testing classes

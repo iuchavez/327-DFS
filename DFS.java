@@ -419,4 +419,35 @@ public class DFS {
         System.out.print("File was successfully written.");    
     }
 
+    public void MapReduce(){
+        Scanner in = new Scanner(System.in);
+        Metadata md = readMetaData();
+        String fileName = "";
+        LinkedList<mFile> files;
+        mFile ogFile;
+        Boolean found = false; 
+        System.out.print("Which file will you like to reduce?");
+        if(in.hasNext()){
+           fileName = in.nextLine();
+        }
+        
+        // Search for the file linearly
+        files = md.getFile();
+        for(mFile f: files){
+            if(f.getName().equals(fileName)){
+                found = true;
+                ogFile = f;
+            }
+        }
+        if(!found){
+                System.out.print("File was not found.");
+                return;
+        }
+        long guid = md5(fileName);
+        try{
+            InputStream mapFile = chord.get(guid);
+        } catch(Exception e){e.printStackTrace();}
+        
+        chord.runMapReduce(mapFile);
+    }
 }

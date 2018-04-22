@@ -1,5 +1,5 @@
 
-public class Mapper extends MapReduceInterface {
+public class Mapper implements MapReduceInterface {
 
     /**
      * //TODO
