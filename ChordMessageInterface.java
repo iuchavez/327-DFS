@@ -18,9 +18,9 @@ public interface ChordMessageInterface extends Remote
 
 
     //context inferface functions
-    public void setWorkingPeer(Long page);
+    public void setWorkingPeer(Long page) throws IOException;
 	public void completePeer(Long page, Long n) throws RemoteException;
-    public boolean isPhaseCompleted();
+    public boolean isPhaseCompleted() throws IOException;
     
     // Assumed we need to alter ChordMessageInterface to Context in reduceContext and mapContext
 	public void reduceContext(Long source, MapReduceInterface reducer,

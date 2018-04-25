@@ -296,14 +296,16 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 
-	public void setWorkingPeer(Long page) { set.add(page); } 
+	public void setWorkingPeer(Long page) throws IOException { 
+        set.add(page); 
+    } 
 
 	public void completePeer(Long page, Long n) throws RemoteException {
 		this.n += n;
 		set.remove(page);
 	}
 
-	public boolean isPhaseCompleted(){
+	public boolean isPhaseCompleted() throws IOException {
 		if(set.isEmpty())
 			return true;
 		return false;
