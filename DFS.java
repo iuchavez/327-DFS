@@ -60,7 +60,7 @@ public class DFS {
     int port;
     Chord chord;
 
-    private long md5(String objectName) {
+    public static long md5(String objectName) {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.reset();
@@ -419,4 +419,35 @@ public class DFS {
         System.out.print("File was successfully written.");    
     }
 
+    public void MapReduce(){
+        Scanner in = new Scanner(System.in);
+        Metadata md = readMetaData();
+        String fileName = "";
+        LinkedList<mFile> files;
+        mFile ogFile;
+        Boolean found = false; 
+        InputStream mapFile = null;
+        System.out.print("Which file will you like to reduce?");
+        if(in.hasNext()){
+           fileName = in.nextLine();
+        }
+        
+        // Search for the file linearly
+        files = md.getFile();
+        for(mFile f: files){
+            if(f.getName().equals(fileName)){
+                found = true;
+                ogFile = f;
+            }
+        }
+        if(!found){
+                System.out.print("File was not found.");
+                return;
+        }
+        long guid = md5(fileName);
+        try{
+            mapFile = chord.get(guid);
+            chord.runMapReduce(mapFile);
+        } catch(Exception e){e.printStackTrace();}
+    }
 }

@@ -27,7 +27,7 @@ public class Client {
         Scanner in = new Scanner(System.in);
         int input = 0;
 
-        while (input != 10) {
+        while (input != -1) {
 
             System.out.println("------MAIN MENU------");
             System.out.println("-------1. JOIN-------");
@@ -39,7 +39,8 @@ public class Client {
             System.out.println("-------7. HEAD-------");
             System.out.println("-------8. APPEND-----");
             System.out.println("-------9. MOVE-------");
-            System.out.println("------10. EXIT-------");
+            System.out.println("------10. MapReduce-------");
+            System.out.println("-------0. EXIT-------");
             System.out.print("Type in an option number: ");
 
             if (in.hasNextInt()) {
@@ -75,6 +76,10 @@ public class Client {
                     dfs.mv(in);
                     break;
                 case 10:
+                    dfs.MapReduce();
+                    break;
+                case 0:
+                    input = -1;
                     System.out.println("Exit Client.");
                     break;
                 default:

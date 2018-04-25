@@ -22,11 +22,11 @@ public interface ChordMessageInterface extends Remote
 	public void completePeer(Long page, Long n) throws RemoteException;
     public boolean isPhaseCompleted();
     
+    // Assumed we need to alter ChordMessageInterface to Context in reduceContext and mapContext
 	public void reduceContext(Long source, MapReduceInterface reducer,
-	ChordMessageInterface context) throws RemoteException;
+	Context context) throws RemoteException;
 	public void mapContext(Long page, MapReduceInterface mapper,
-    
-    ChordMessageInterface context) throws RemoteException;
+    Context context) throws RemoteException;
 
 	public void emitMap(Long key, String value) throws RemoteException;
 	public void emitReduce(Long page, String value) throws RemoteException;
