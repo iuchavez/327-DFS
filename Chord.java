@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 
-
+ 
 public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordMessageInterface
 {
     public static final int M = 2;
@@ -16,8 +16,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     ChordMessageInterface[] finger;
     int nextFinger;
     long guid;   		// GUID (i)
-    TreeMap BMap, bReduceTreeMap;
-    
+    TreeMap<Long, List<String>> BMap;
+    TreeMap<Long, String > BReduce;
+    Long n;
+	Set<Long> set;
     
     public Boolean isKeyInSemiCloseInterval(long key, long key1, long key2)
     {
@@ -278,13 +280,12 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         }
     }
 
-Long n = 0;
-	Set<Long> set;
+    
 
 	//the following function is intended to be in DFS, add later
 	public void runMapReduce(InputStream file){ // may not be inputstream
 		Context context = new Context();
-		MapReduceInterface mapreduce = new MapReduceInterface();
+ 		Mapper mapreduce = new Mapper();
 		//for(Page p: metafile.file)
 		//	context.add(p);
 		//	peer = process to store page
@@ -325,20 +326,20 @@ Long n = 0;
 		//read line by line
 		//execute mapper.map(key,value,context)
 		//once read, context.completePeer(page, n)
-		//create new thread
+		//create new threadmapContext(
 	}
 
     public void emitMap(Long key, String value) throws RemoteException
     {
-    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
     	{
     	// insert in the BMap. Allows repetition
     		if (BMap.containsKey(key))
     		{
-    			List< String > list = new List< String >();
+    			LinkedList< String > list = new LinkedList< String >();
 				BMap.put(key,list);
 			} 
-			BMap.put(key).add(value);
+			BMap.get(key).add(value);
 		}
 		else
 		{
@@ -347,12 +348,12 @@ Long n = 0;
 		}
 }
 
-	public void emitReduce(Long page, String value) throws RemoteException
+	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
-		if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+		if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
 		{
 			// innsert in the BReduce
-			BReduce(key, value);
+			BReduce.put(key, value);
 		} 
 		else
 		{
@@ -362,13 +363,14 @@ Long n = 0;
 	}
 
 	public void map(Long key, String value) throws IOException {
-		//for each word in value
-		emit(md5(word),word+":"+1);
+        //for each word in value
+        String word = "";
+		emitMap(DFS.md5(word),word+":"+1);
 	}
 
 	public void reduce(Long key, String values[]) throws IOException {
-		word = values[0].split(":")[0];
-		emit(key, word + ":" + values.length);
+		String word = values[0].split(":")[0];
+		emitReduce(key, word + ":" + values.length);
 	}
 
 }

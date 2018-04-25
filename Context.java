@@ -2,7 +2,7 @@ import java.util.Set;
 import java.rmi.*;
 
 public class Context implements ContextInterface {
-    Long n = 0;
+    Long n = 0l;
     Set<Long> set;
 
     public void setWorkingPeer(Long page)

@@ -60,7 +60,7 @@ public class DFS {
     int port;
     Chord chord;
 
-    private long md5(String objectName) {
+    public static long md5(String objectName) {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.reset();
@@ -426,6 +426,7 @@ public class DFS {
         LinkedList<mFile> files;
         mFile ogFile;
         Boolean found = false; 
+        InputStream mapFile = null;
         System.out.print("Which file will you like to reduce?");
         if(in.hasNext()){
            fileName = in.nextLine();
@@ -445,9 +446,8 @@ public class DFS {
         }
         long guid = md5(fileName);
         try{
-            InputStream mapFile = chord.get(guid);
+            mapFile = chord.get(guid);
+            chord.runMapReduce(mapFile);
         } catch(Exception e){e.printStackTrace();}
-        
-        chord.runMapReduce(mapFile);
     }
 }
