@@ -444,7 +444,12 @@ public class DFS {
                 System.out.print("File was not found.");
                 return;
         }
+        //THIS GUID DOES NOT CORRESPOND TO EXISTING GUID OF FILE, needs change
+        //you only md5 the filename for a page GUID, must get GUID of metadata
+        //cannot call md5("Metadata") because this is not the same as the one in write/read Metadata
+        //what shall we do?
         long guid = md5(fileName);
+
         try{
             mapFile = chord.get(guid);
             chord.runMapReduce(mapFile);
