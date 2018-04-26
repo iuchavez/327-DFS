@@ -424,7 +424,7 @@ public class DFS {
         Metadata md = readMetaData();
         String fileName = "";
         LinkedList<mFile> files;
-        mFile ogFile;
+        mFile ogFile = new mFile();
         Boolean found = false; 
         InputStream mapFile = null;
         System.out.print("Which file will you like to reduce?");
@@ -448,11 +448,12 @@ public class DFS {
         //you only md5 the filename for a page GUID, must get GUID of metadata
         //cannot call md5("Metadata") because this is not the same as the one in write/read Metadata
         //what shall we do?
-        long guid = md5(fileName);
-
-        try{
-            mapFile = chord.get(guid);
-            chord.runMapReduce(mapFile);
-        } catch(Exception e){e.printStackTrace();}
+        for(Page p : ogFile.getPage()){
+        	long guid = p.getGuid();
+        	try{
+            	mapFile = chord.get(guid);
+            	chord.runMapReduce(mapFile);
+        	} catch(Exception e){e.printStackTrace();}
+        }
     }
 }
