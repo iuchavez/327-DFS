@@ -14,20 +14,31 @@ public class Context implements ContextInterface {
         this.n += n;
         set.remove(page);
     }
-    public Boolean isPhaseCompleted()
+    public boolean isPhaseCompleted()
     {
-        if (set.isEmpty())
-        return true;
-        return false;
+        return set.isEmpty();
     }
-    public void reduceContext(Long source, MapReduceInterface reducer,
+    public void reduceContext(Long source, Mapper reducer,
     Context context) throws RemoteException
     {
-        // TODO
+		//if(source != guid) {
+		//	successor.reduceContext(source, reducer, context);
+		//}
+		
+		//create new thread
+		//in this thread:
+			//read BReduce in order
+			//reducer.reduce(key,value[],context)
+			//when complete, context.complete(guid,context.n)
     }
-    public void mapContext(Long page, MapReduceInterface mapper,
+    public void mapContext(Long page, Mapper mapper,
     Context context) throws RemoteException
     {
-        // TODO
+		//setWorkingPeer(page);
+		//open page(guid)
+		//read line by line
+		//mapper.map(key, value, context);
+		//once read, context.completePeer(page, context.n)
+		//create new thread
     }
 }

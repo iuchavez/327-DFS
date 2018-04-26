@@ -290,7 +290,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		//	context.add(p);
 		//	peer = process to store page
 		//	peer.mapContext(page,mapreduce,context);
-		//	if(context.hasCompleted())
+		//	if(context.isPhaseCompleted())
 		//		reduceContext(guid, mapreduce, context);
 		//wait until context.hasCompleted()
 	}
@@ -306,29 +306,28 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 	public boolean isPhaseCompleted() throws IOException {
-		if(set.isEmpty())
-			return true;
-		return false;
+		return set.isEmpty();
 	}
 
-	public void reduceContext(Long page, MapReduceInterface reducer, Context context) throws RemoteException{
-		//TODO
-		//if source != guid
-		//call context.add(guid)
-		//successor.reduceContext(source, reducer, context)
+	public void reduceContext(Long source, Mapper reducer, Context context) throws RemoteException{
+		//if(source != guid) {
+		//	successor.reduceContext(source, reducer, context);
+		//}
+
 		//create new thread
-		//read BReduce in order
-		//reducer.reduce(key,value[],context)
-		//when complete, context.complete(guid,n)
+		//in this thread:
+			//read BReduce in order
+			//reducer.reduce(key,value[],context)
+			//when complete, context.complete(guid,context.n)
 	}
 
-	public void mapContext(Long page, MapReduceInterface mapper, Context context) throws RemoteException{
-		//TODO
-		//open page
+	public void mapContext(Long page, Mapper mapper, Context context) throws RemoteException{
+		//setWorkingPeer(page);
+		//open page(guid)
 		//read line by line
-		//execute mapper.map(key,value,context)
-		//once read, context.completePeer(page, n)
-		//create new threadmapContext(
+		//mapper.map(key, value, context);
+		//once read, context.completePeer(page, context.n)
+		//create new thread
 	}
 
     public void emitMap(Long key, String value) throws RemoteException
@@ -336,7 +335,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
     	{
     	// insert in the BMap. Allows repetition
-    		if (BMap.containsKey(key))
+    		if (!BMap.containsKey(key))
     		{
     			LinkedList< String > list = new LinkedList< String >();
 				BMap.put(key,list);

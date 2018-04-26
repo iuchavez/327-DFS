@@ -23,9 +23,10 @@ public interface ChordMessageInterface extends Remote
     public boolean isPhaseCompleted() throws IOException;
     
     // Assumed we need to alter ChordMessageInterface to Context in reduceContext and mapContext
-	public void reduceContext(Long source, MapReduceInterface reducer,
+    //Mark change: MapReduceInterface to Mapper
+	public void reduceContext(Long source, Mapper reducer,
 	Context context) throws RemoteException;
-	public void mapContext(Long page, MapReduceInterface mapper,
+	public void mapContext(Long page, Mapper mapper,
     Context context) throws RemoteException;
 
 	public void emitMap(Long key, String value) throws RemoteException;

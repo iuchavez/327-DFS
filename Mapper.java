@@ -11,7 +11,7 @@ public class Mapper implements MapReduceInterface {
      */
     //TODO: CONTEXT
     public void map(Long key, String value, ChordMessageInterface context) throws IOException{
-
+    	context.emitMap(key, value);
     }
 
     /**
@@ -20,8 +20,9 @@ public class Mapper implements MapReduceInterface {
      * word = values[0].split(":")[0]
      * emit(key, word +":"+ len(values));
      */
-	public void reduce(Long key, LinkedList< String > value, ChordMessageInterface context){
-        
+	public void reduce(Long key, LinkedList< String > value, ChordMessageInterface context) throws IOException{
+		String word = value.get(0);
+        context.emitReduce(key, word + ":" + value.size());
     }
 
 }
