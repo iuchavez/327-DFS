@@ -448,12 +448,12 @@ public class DFS {
         //you only md5 the filename for a page GUID, must get GUID of metadata
         //cannot call md5("Metadata") because this is not the same as the one in write/read Metadata
         //what shall we do?
-        for(Page p : ogFile.getPage()){
-        	long guid = p.getGuid();
-        	try{
-            	mapFile = chord.get(guid);
-            	chord.runMapReduce(mapFile);
-        	} catch(Exception e){e.printStackTrace();}
-        }
+        //for(Page p : ogFile.getPage()){
+        long guid = md5("Metadata");
+        try{
+            mapFile = chord.get(guid);
+            chord.runMapReduce(mapFile, ogFile);
+        } catch(Exception e){e.printStackTrace();}
+        //}
     }
 }

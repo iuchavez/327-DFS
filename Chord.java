@@ -280,19 +280,20 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         }
     }
 
-    
-
-	//the following function is intended to be in DFS, add later
-	public void runMapReduce(InputStream file){ // may not be inputstream
+	//does map reduce on page    
+	public void runMapReduce(InputStream file, mFile f){ // may not be inputstream
 		Context context = new Context();
  		Mapper mapreduce = new Mapper();
-		//for(Page p: metafile.file)
-		//	context.add(p);
-		//	peer = process to store page
-		//	peer.mapContext(page,mapreduce,context);
-		//	if(context.isPhaseCompleted())
-		//		reduceContext(guid, mapreduce, context);
-		//wait until context.hasCompleted()
+
+		do{
+ 			for(Page p: f.getPage()){
+ 				context.add(p);
+ 				ChordMessageInterface peer = null; // process to store page, might need to instantiate this with something
+ 				peer.mapContext(p.getGuid());
+ 				if(context.isPhaseCompleted())
+ 					reduceContext(this.guid, mapreduce, context);
+ 			}
+ 		}while(!context.isPhaseCompleted());
 	}
 
 
@@ -310,9 +311,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 	public void reduceContext(Long source, Mapper reducer, Context context) throws RemoteException{
-		//if(source != guid) {
-		//	successor.reduceContext(source, reducer, context);
-		//}
+		if(source != this.guid) {
+			successor.reduceContext(source, reducer, context);
+		}
 
 		//create new thread
 		//in this thread:
