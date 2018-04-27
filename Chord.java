@@ -285,15 +285,15 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		Context context = new Context();
  		Mapper mapreduce = new Mapper();
 
-		do{
- 			for(Page p: f.getPage()){
- 				context.add(p);
- 				ChordMessageInterface peer = null; // process to store page, might need to instantiate this with something
- 				peer.mapContext(p.getGuid());
- 				if(context.isPhaseCompleted())
- 					reduceContext(this.guid, mapreduce, context);
- 			}
- 		}while(!context.isPhaseCompleted());
+		//do{
+ 		//	for(Page p: f.getPage()){
+ 		//		context.add(p);
+ 		//		ChordMessageInterface peer = null; // process to store page, might need to instantiate this with something
+ 		//		peer.mapContext(p.getGuid());
+ 		//		if(context.isPhaseCompleted())
+ 		//			reduceContext(this.guid, mapreduce, context);
+ 		//	}
+ 		//}while(!context.isPhaseCompleted());
 	}
 
 
