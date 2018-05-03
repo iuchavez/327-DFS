@@ -270,7 +270,10 @@ public class DFS {
         int pageNumber = 0;
         Page p = null;
         InputStream iStream = null;
+        ChordMessageInterface peer = null;
 
+
+        // Take input from user
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
@@ -293,7 +296,8 @@ public class DFS {
                     LinkedList<Page> pgs = file.getPage();
                     p = pgs.get(pageNumber);
                     System.out.println(p.toString());
-                    iStream = chord.get(p.getGuid());
+                    peer = chord.locateSuccessor(p.getGuid());
+                    iStream = peer.get(p.getGuid());
                     return iStream;
                 }
             }
@@ -368,6 +372,7 @@ public class DFS {
         mFile fileToAppend = null;
         long guid = 0;
         FileStream fStream = null;
+        ChordMessageInterface peer = null;
 
         // Prompt user for file name
         System.out.print("Enter File to append to: ");
@@ -400,6 +405,7 @@ public class DFS {
             fStream = new FileStream(filepath);
             guid = md5(filepath);
             pg.setGuid(guid);
+            peer = chord.locateSuccessor(guid);
             pg.setSize(fStream.getSize());
             pg.setNumber(fileToAppend.getPage().size());
         } catch (FileNotFoundException e){
@@ -416,7 +422,7 @@ public class DFS {
 
         //Add Files to DFS and write updated metadata back to the authoritative index
         writeMetaData(md);
-        chord.put(guid, fStream); 
+        peer.put(guid, fStream); 
         System.out.print("File was successfully written.");    
     }
 
@@ -428,6 +434,7 @@ public class DFS {
         mFile originalFile = new mFile();
         Boolean fileFoundFlag = false; 
         InputStream mapFile = null;
+        ChordMessageInterface peer = null;
         
         // Take input from the user
         System.out.print("Which file will you like to count?");
@@ -451,15 +458,22 @@ public class DFS {
             return;
         }
         
-        //THIS GUID DOES NOT CORRESPOND TO EXISTING GUID OF FILE, needs change
-        //you only md5 the filename for a page GUID, must get GUID of metadata
-        //cannot call md5("Metadata") because this is not the same as the one in write/read Metadata
-        //what shall we do?
+        Mapper mapper = new Mapper();
+        Context context = new Context();
+        
         for(Page p : originalFile.getPage()){
         	long pageGuid = p.getGuid();
+        	
         	try{
-        		mapFile = chord.get(pageGuid);
-        		chord.runMapReduce(mapFile, originalFile);
+        		peer = chord.locateSuccessor(pageGuid);
+        		peer.mapContext(p.getGuid(), mapper, context); /// in while
+        	
+        		while(!context.isPhaseCompleted()) {
+        			// Wait
+        		}
+        		
+        		chord.reduceContext(chord.getId(), mapper, context);
+        		
         	} catch(Exception e) {
         		e.printStackTrace();
         	}

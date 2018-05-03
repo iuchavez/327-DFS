@@ -15,12 +15,6 @@ public interface ChordMessageInterface extends Remote
     public void put(long guidObject, InputStream inputStream) throws IOException, RemoteException;
     public InputStream get(long guidObject) throws IOException, RemoteException;
     public void delete(long guidObject) throws IOException, RemoteException;
-
-
-    //context inferface functions
-    public void setWorkingPeer(Long page) throws IOException;
-	public void completePeer(Long page, Long n) throws RemoteException;
-    public boolean isPhaseCompleted() throws IOException;
     
     // Assumed we need to alter ChordMessageInterface to Context in reduceContext and mapContext
     //Mark change: MapReduceInterface to Mapper

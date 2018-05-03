@@ -296,20 +296,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
  		//}while(!context.isPhaseCompleted());
 	}
 
-
-	public void setWorkingPeer(Long page) throws IOException { 
-        set.add(page); 
-    } 
-
-	public void completePeer(Long page, Long n) throws RemoteException {
-		this.n += n;
-		set.remove(page);
-	}
-
-	public boolean isPhaseCompleted() throws IOException {
-		return set.isEmpty();
-	}
-
 	public void reduceContext(Long source, Mapper reducer, Context context) throws RemoteException{
 		if(source != this.guid) {
 			successor.reduceContext(source, reducer, context);
@@ -362,17 +348,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			ChordMessageInterface peer = this.locateSuccessor(key);
 			peer.emitReduce(key, value);
 		}
-	}
-
-	public void map(Long key, String value) throws IOException {
-        //for each word in value
-        String word = "";
-		emitMap(DFS.md5(word),word+":"+1);
-	}
-
-	public void reduce(Long key, String values[]) throws IOException {
-		String word = values[0].split(":")[0];
-		emitReduce(key, word + ":" + values.length);
 	}
 
 }
