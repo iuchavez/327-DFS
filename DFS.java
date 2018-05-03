@@ -59,6 +59,7 @@ import com.google.gson.JsonParseException;
 public class DFS {
     int port;
     Chord chord;
+    public static final String METADATA = "Metadata";
 
     public static long md5(String objectName) {
         try {
@@ -103,7 +104,7 @@ public class DFS {
     {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
-        long guid = md5("Metadata");
+        long guid = md5(METADATA);
         Metadata m = null;
 
         try {
@@ -136,7 +137,7 @@ public class DFS {
     public void writeMetaData(Metadata metadata) {
         Gson gson = new GsonBuilder().create();
         FileWriter  writer = null;
-        long guid = md5("Metadata");
+        long guid = md5(METADATA);
         InputStream mdRaw = null;
         Metadata m = new Metadata();
         ChordMessageInterface peer = null;
@@ -421,39 +422,47 @@ public class DFS {
 
     public void MapReduce(){
         Scanner in = new Scanner(System.in);
-        Metadata md = readMetaData();
+        Metadata metaData = readMetaData();
         String fileName = "";
         LinkedList<mFile> files;
-        mFile ogFile = new mFile();
-        Boolean found = false; 
+        mFile originalFile = new mFile();
+        Boolean fileFoundFlag = false; 
         InputStream mapFile = null;
-        System.out.print("Which file will you like to reduce?");
+        
+        // Take input from the user
+        System.out.print("Which file will you like to count?");
         if(in.hasNext()){
            fileName = in.nextLine();
         }
         
         // Search for the file linearly
-        files = md.getFile();
+        files = metaData.getFile();
         for(mFile f: files){
             if(f.getName().equals(fileName)){
-                found = true;
-                ogFile = f;
+            	System.out.print("File was found!");
+                fileFoundFlag = true;
+                originalFile = f;
             }
         }
-        if(!found){
-                System.out.print("File was not found.");
-                return;
+        
+        // If not found report to user
+        if(!fileFoundFlag){
+            System.out.print("File was not found.");
+            return;
         }
+        
         //THIS GUID DOES NOT CORRESPOND TO EXISTING GUID OF FILE, needs change
         //you only md5 the filename for a page GUID, must get GUID of metadata
         //cannot call md5("Metadata") because this is not the same as the one in write/read Metadata
         //what shall we do?
-        //for(Page p : ogFile.getPage()){
-        long guid = md5("Metadata");
-        try{
-            mapFile = chord.get(guid);
-            chord.runMapReduce(mapFile, ogFile);
-        } catch(Exception e){e.printStackTrace();}
-        //}
+        for(Page p : originalFile.getPage()){
+        	long pageGuid = p.getGuid();
+        	try{
+        		mapFile = chord.get(pageGuid);
+        		chord.runMapReduce(mapFile, originalFile);
+        	} catch(Exception e) {
+        		e.printStackTrace();
+        	}
+        }
     }
 }
