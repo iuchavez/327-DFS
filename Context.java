@@ -24,6 +24,10 @@ public class Context implements ContextInterface {
 		//if(source != guid) {
 		//	successor.reduceContext(source, reducer, context);
 		//}
+        if(source != this.guid) {
+			successor.reduceContext(source, reducer, context);
+		}
+
 		
 		//create new thread
 		//in this thread:
@@ -40,5 +44,11 @@ public class Context implements ContextInterface {
 		//mapper.map(key, value, context);
 		//once read, context.completePeer(page, context.n)
 		//create new thread
+        setWorkingPeer(page);
+        FileStream pageStream = this.get(page.getGuid());
+        BufferedReader pageReader
+        while(pageStream.hasNext()){
+             
+        }
     }
 }

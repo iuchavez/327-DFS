@@ -296,41 +296,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
  		//}while(!context.isPhaseCompleted());
 	}
 
-
-	public void setWorkingPeer(Long page) throws IOException { 
-        set.add(page); 
-    } 
-
-	public void completePeer(Long page, Long n) throws RemoteException {
-		this.n += n;
-		set.remove(page);
-	}
-
-	public boolean isPhaseCompleted() throws IOException {
-		return set.isEmpty();
-	}
-
-	public void reduceContext(Long source, Mapper reducer, Context context) throws RemoteException{
-		if(source != this.guid) {
-			successor.reduceContext(source, reducer, context);
-		}
-
-		//create new thread
-		//in this thread:
-			//read BReduce in order
-			//reducer.reduce(key,value[],context)
-			//when complete, context.complete(guid,context.n)
-	}
-
-	public void mapContext(Long page, Mapper mapper, Context context) throws RemoteException{
-		//setWorkingPeer(page);
-		//open page(guid)
-		//read line by line
-		//mapper.map(key, value, context);
-		//once read, context.completePeer(page, context.n)
-		//create new thread
-	}
-
     public void emitMap(Long key, String value) throws RemoteException
     {
     	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
@@ -348,7 +313,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			ChordMessageInterface peer = this.locateSuccessor(key);
 			peer.emitMap(key, value);
 		}
-}
+    }
 
 	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
@@ -362,17 +327,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			ChordMessageInterface peer = this.locateSuccessor(key);
 			peer.emitReduce(key, value);
 		}
-	}
-
-	public void map(Long key, String value) throws IOException {
-        //for each word in value
-        String word = "";
-		emitMap(DFS.md5(word),word+":"+1);
-	}
-
-	public void reduce(Long key, String values[]) throws IOException {
-		String word = values[0].split(":")[0];
-		emitReduce(key, word + ":" + values.length);
 	}
 
 }
