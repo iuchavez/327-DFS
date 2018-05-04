@@ -458,21 +458,21 @@ public class DFS {
             return;
         }
         
-        Mapper mapper = new Mapper();
+        //Mapper mapper = new Mapper();
         
         for(Page p : originalFile.getPage()){
         	long pageGuid = p.getGuid();
         	
         	try{
         		peer = chord.locateSuccessor(pageGuid);
-        		peer.mapContext(p.getGuid(), mapper, chord); /// in while
+        		peer.mapContext(p.getGuid(), chord); /// in while
         	
         		while(!chord.isPhaseCompleted()) {
         			// Wait
         			Thread.sleep(1000);
         		}
         		
-        		chord.reduceContext(chord.getId(), mapper, chord);
+        		chord.reduceContext(chord.getId(), chord);
         		
         	} catch(Exception e) {
         		e.printStackTrace();

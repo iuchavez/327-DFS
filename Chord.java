@@ -16,7 +16,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     ChordMessageInterface[] finger;
     int nextFinger;
     long guid;   		// GUID (i)
-    TreeMap<Long, List<String>> BMap;
+    TreeMap<Long, LinkedList<String>> BMap;
     TreeMap<Long, String > BReduce;
     Long n = 0l;
 	Set<Long> set;
@@ -310,55 +310,58 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		return set.isEmpty();
 	}
 
-	public void reduceContext(Long source, Mapper reducer, ChordMessageInterface context) throws RemoteException{
+	public void reduceContext(Long source, ChordMessageInterface context) throws RemoteException{
 		if(source != this.guid) {
-			successor.reduceContext(source, reducer, context);
+			successor.reduceContext(source, context);
 		}
 		
 		Thread reduceThread = new Thread() {
 			public void run() {
 				System.out.print("Entered reduce thread");
+
+				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
+					try{
+						context.reduce(entry.getKey(), entry.getValue(), context);
+					}
+					catch(IOException e){
+						System.out.print("cannot reduce");
+					}
+					//wait for completion
+				}
+
+				//peer creates a page(guid) with BReduce
+				//insert page into fileName_reduce : append file
 			}
 		};
 		
 		reduceThread.start();
-
-		//create new thread
-		//in this thread:
-			//read BReduce in order
-			//reducer.reduce(key,value[],context)
-			//when complete, context.complete(guid,context.n)
 	}
 
-	public void mapContext(Long page, Mapper mapper, ChordMessageInterface context) throws RemoteException{
+	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException{
 		
 		Thread mapThread = new Thread() {
 			public void run() {
 				System.out.print("Entered map thread");
 				try {
 					setWorkingPeer(page);
-					Thread.sleep(5000);
-					completePeer(page, 400l);
+
+					//find file with page title
+					//open page(guid)
+
+					//for each line
+						//context.map(key, value, context);
+
+					context.completePeer(page, n); //
 				} catch(IOException e){
 					System.out.println("Set working peer threw an IO exceptions");
-				} catch (InterruptedException e) {
-					System.out.println("Sleep was interupted");
-				}
+				} 
+				//	catch (InterruptedException e) {
+				//	System.out.println("Sleep was interupted");
+				//}
 			}
 		};
 		
 		mapThread.start();
-		
-		// Create thread
-		// Deledate work
-		// Return
-
-		//setWorkingPeer(page);
-		//open page(guid)
-		//read line by line
-		//mapper.map(key, value, context);
-		//once read, context.completePeer(page, context.n)
-		//create new thread
 	}
 
     public void emitMap(Long key, String value) throws RemoteException
@@ -384,7 +387,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	{ 
 		if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
 		{
-			// innsert in the BReduce
+			// insert in the BReduce
 			BReduce.put(key, value);
 		} 
 		else
@@ -394,15 +397,13 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		}
 	}
 
-	public void map(Long key, String value) throws IOException {
-        //for each word in value
-        String word = "";
-		emitMap(DFS.md5(word),word+":"+1);
+	public void map(Long key, String value, ChordMessageInterface context) throws IOException {
+		context.emitMap(key,value);
 	}
 
-	public void reduce(Long key, String values[]) throws IOException {
-		String word = values[0].split(":")[0];
-		emitReduce(key, word + ":" + values.length);
+	public void reduce(Long key, LinkedList<String> values, ChordMessageInterface context) throws IOException {
+		String word = values.get(0);
+		context.emitReduce(key, word + ":" + values.size());
 	}
 
 }
