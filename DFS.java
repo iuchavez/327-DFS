@@ -426,7 +426,7 @@ public class DFS {
         System.out.print("File was successfully written.");    
     }
 
-    public void MapReduce(){
+    public void runMapReduce() throws RemoteException{
         Scanner in = new Scanner(System.in);
         Metadata metaData = readMetaData();
         String fileName = "";
@@ -459,20 +459,20 @@ public class DFS {
         }
         
         Mapper mapper = new Mapper();
-        Context context = new Context();
         
         for(Page p : originalFile.getPage()){
         	long pageGuid = p.getGuid();
         	
         	try{
         		peer = chord.locateSuccessor(pageGuid);
-        		peer.mapContext(p.getGuid(), mapper, context); /// in while
+        		peer.mapContext(p.getGuid(), mapper, chord); /// in while
         	
-        		while(!context.isPhaseCompleted()) {
+        		while(!chord.isPhaseCompleted()) {
         			// Wait
+        			Thread.sleep(1000);
         		}
         		
-        		chord.reduceContext(chord.getId(), mapper, context);
+        		chord.reduceContext(chord.getId(), mapper, chord);
         		
         	} catch(Exception e) {
         		e.printStackTrace();

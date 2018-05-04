@@ -76,7 +76,7 @@ public class Client {
                     dfs.mv(in);
                     break;
                 case 10:
-                    dfs.MapReduce();
+                    dfs.runMapReduce();
                     break;
                 case 0:
                     input = -1;
