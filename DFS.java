@@ -467,10 +467,10 @@ public class DFS {
         		peer = chord.locateSuccessor(pageGuid);
         		peer.mapContext(p.getGuid(), chord); /// in while
         	
-        		while(!chord.isPhaseCompleted()) {
+        		//while(!chord.isPhaseCompleted()) {
         			// Wait
-        			Thread.sleep(1000);
-        		}
+        		//	Thread.sleep(1000);
+        		//}
         		
         		chord.reduceContext(chord.getId(), chord);
         		

@@ -307,7 +307,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 	public boolean isPhaseCompleted() throws IOException {
+		if(set == null)
+			return false;
 		return set.isEmpty();
+
 	}
 
 	public void reduceContext(Long source, ChordMessageInterface context) throws RemoteException{
@@ -343,7 +346,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			public void run() {
 				System.out.print("Entered map thread");
 				try {
-					setWorkingPeer(page);
+					//setWorkingPeer(page);
 
 					//find file with page title
 					//open page(guid)
