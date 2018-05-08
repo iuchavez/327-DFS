@@ -13,9 +13,8 @@ public class FileStream extends InputStream implements Serializable {
       
       FileInputStream fileInputStream = new FileInputStream(pathName);
       int i = 0;
-      while (fileInputStream.available()> 0)
-      {
-	byteBuffer[i++] = (byte)fileInputStream.read();
+      while (fileInputStream.available()> 0){
+	      byteBuffer[i++] = (byte)fileInputStream.read();
       }
       fileInputStream.close();	
       currentPosition = 0;	  
@@ -27,17 +26,17 @@ public class FileStream extends InputStream implements Serializable {
     
     public int read() throws IOException
     {
- 	if (currentPosition < size)
- 	  return (int)byteBuffer[currentPosition++];
- 	return 0;
+      if (currentPosition < size)
+        return (int)byteBuffer[currentPosition++];
+      return 0;
     }
     
     public int available() throws IOException
     {
-	return size - currentPosition;
+	    return size - currentPosition;
     }
 
     public int getSize(){
-        return size;
+      return size;
     }
 }
