@@ -16,10 +16,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     ChordMessageInterface[] finger;
     int nextFinger;
     long guid;   		// GUID (i)
-    TreeMap<Long, LinkedList<String>> BMap;
-    TreeMap<Long, String > BReduce;
+    TreeMap<Long, LinkedList<String>> BMap = new TreeMap<Long, LinkedList<String>>();
+    TreeMap<Long, String > BReduce = new TreeMap<Long, String>();
     Long n = 0l;
-	Set<Long> set;
+	Set<Long> set = new HashSet<Long>();
     
     public Boolean isKeyInSemiCloseInterval(long key, long key1, long key2)
     {
@@ -319,6 +319,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		}
 		
 		Thread reduceThread = new Thread() {
+			@Override
 			public void run() {
 				System.out.print("Entered reduce thread");
 
@@ -343,14 +344,14 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException{
 		// Context is the current context
 		Thread mapThread = new Thread() {
+			@Override
 			public void run() {
                 String fileName = "temp.txt";
                 Long n = 0l;
 				System.out.print("Entered map thread");
 				try {
-//                    FileOutputStream output = new FileOutputStream(fileName);
-					//setWorkingPeer(page);
-                    setWorkingPeer(page);
+					setWorkingPeer(page);
+
 					//find file with page title
 					//open page(guid)
                     // ChordMessageInterface peer = this.locateSuccessor(page);
@@ -378,6 +379,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		mapThread.start();
 	}
 
+	/**
+	 * Complete
+	 */
     public void emitMap(Long key, String value) throws RemoteException
     {
     	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
@@ -396,7 +400,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			peer.emitMap(key, value);
 		}
 }
-
+    
+    /**
+     * Complete
+     */
 	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
 		if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
