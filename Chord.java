@@ -341,10 +341,11 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException{
-		
+		// Context is the current context
 		Thread mapThread = new Thread() {
 			public void run() {
                 String fileName = "temp.txt";
+                int n = 0;
 				System.out.print("Entered map thread");
 				try {
                     FileOutputStream output = new FileOutputStream(fileName)
@@ -352,17 +353,18 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                     setWorkingPeer(page);
 					//find file with page title
 					//open page(guid)
-                    ChordMessageInterface peer = this.locateSuccessor(page);
-                    InputStream fstream = peer.get(page);
+                    // ChordMessageInterface peer = this.locateSuccessor(page);
+                    InputStream fstream = this.get(page);
                     // while(fstream.available()>0)
                     //     output.write(fstream.read());
                     // output.close();
                     Scanner scan = new Scanner(fstream);
                     while(scan.hasNextLine()){
-                        mapLine(scan.nextLine());
+                        mapLine(scan.nextLine(), context);
+                        n++;
                     }
 					fstream.close();
-
+                    scan.close();
 					context.completePeer(page, n); //
 				} catch(IOException e){
 					System.out.println("Set working peer threw an IO exceptions");
@@ -418,8 +420,8 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		context.emitReduce(key, word + ":" + values.size());
 	}
 
-    public void mapLine(String line){
+    public void mapLine(String line, ChordMessageInterface context){
         String[] kvPair = line.split(":");
-        
+        map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
     }
 }
