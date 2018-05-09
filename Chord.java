@@ -350,7 +350,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                 Long n = 0l;
 				System.out.print("Entered map thread");
 				try {
-					setWorkingPeer(page);
+					context.setWorkingPeer(page);
 
 					//find file with page title
 					//open page(guid)
@@ -428,7 +428,8 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
     public void mapLine(String line, ChordMessageInterface context) throws IOException{
-    	String[] kvPair = line.split(":");
+    	System.out.println(line);
+    	String[] kvPair = line.split(";");
         map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
     }
 }
