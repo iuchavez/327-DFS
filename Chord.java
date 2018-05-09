@@ -345,23 +345,23 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		Thread mapThread = new Thread() {
 			public void run() {
                 String fileName = "temp.txt";
-                int n = 0;
+                Long n = 0l;
 				System.out.print("Entered map thread");
 				try {
-                    FileOutputStream output = new FileOutputStream(fileName)
+//                    FileOutputStream output = new FileOutputStream(fileName);
 					//setWorkingPeer(page);
                     setWorkingPeer(page);
 					//find file with page title
 					//open page(guid)
                     // ChordMessageInterface peer = this.locateSuccessor(page);
-                    InputStream fstream = this.get(page);
+                    InputStream fstream = get(page);
                     // while(fstream.available()>0)
                     //     output.write(fstream.read());
                     // output.close();
                     Scanner scan = new Scanner(fstream);
                     while(scan.hasNextLine()){
                         mapLine(scan.nextLine(), context);
-                        n++;
+                        ++n;
                     }
 					fstream.close();
                     scan.close();
@@ -420,8 +420,8 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		context.emitReduce(key, word + ":" + values.size());
 	}
 
-    public void mapLine(String line, ChordMessageInterface context){
-        String[] kvPair = line.split(":");
+    public void mapLine(String line, ChordMessageInterface context) throws IOException{
+    	String[] kvPair = line.split(":");
         map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
     }
 }
