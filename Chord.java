@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 
-
+ 
 public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordMessageInterface
 {
     public static final int M = 2;
@@ -16,7 +16,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     ChordMessageInterface[] finger;
     int nextFinger;
     long guid;   		// GUID (i)
-    
+    TreeMap<Long, LinkedList<String>> BMap;
+    TreeMap<Long, String > BReduce;
+    Long n = 0l;
+	Set<Long> set;
     
     public Boolean isKeyInSemiCloseInterval(long key, long key1, long key2)
     {
@@ -277,67 +280,115 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         }
     }
 
-Long n = 0;
-	Set<Long> set;
+//	//does map reduce on page    
+//	public void runMapReduce(InputStream file, mFile f){ // may not be inputstream
+//		Context context = new Context();
+// 		Mapper mapreduce = new Mapper();
+//
+//		//do{
+// 		//	for(Page p: f.getPage()){
+// 		//		context.add(p);
+// 		//		ChordMessageInterface peer = null; // process to store page, might need to instantiate this with something
+// 		//		peer.mapContext(p.getGuid());
+// 		//		if(context.isPhaseCompleted())
+// 		//			reduceContext(this.guid, mapreduce, context);
+// 		//	}
+// 		//}while(!context.isPhaseCompleted());
+//	}
 
-	//the following function is intended to be in DFS, add later
-	public void runMapReduce(InputStream file){ // may not be inputstream
-		Context context = new Context();
-		MapReduceInterface mapreduce = new MapReduceInterface();
-		//for(Page p: metafile.file)
-		//	context.add(p);
-		//	peer = process to store page
-		//	peer.mapContext(page,mapreduce,context);
-		//	if(context.hasCompleted())
-		//		reduceContext(guid, mapreduce, context);
-		//wait until context.hasCompleted()
-	}
 
-
-	public void setWorkingPeer(Long page) { set.add(page); } 
+	public void setWorkingPeer(Long page) throws IOException { 
+        set.add(page); 
+    } 
 
 	public void completePeer(Long page, Long n) throws RemoteException {
 		this.n += n;
 		set.remove(page);
 	}
 
-	public boolean isPhaseCompleted(){
-		if(set.isEmpty())
-			return true;
-		return false;
+	public boolean isPhaseCompleted() throws IOException {
+		if(set == null)
+			return false;
+		return set.isEmpty();
+
 	}
 
-	public void reduceContext(Long page, ReduceInterface reducer, Context context) throws RemoteException{
-		//TODO
-		//if source != guid
-		//call context.add(guid)
-		//successor.reduceContext(source, reducer, context)
-		//create new thread
-		//read BReduce in order
-		//reducer.reduce(key,value[],context)
-		//when complete, context.complete(guid,n)
+	public void reduceContext(Long source, ChordMessageInterface context) throws RemoteException{
+		if(source != this.guid) {
+			successor.reduceContext(source, context);
+		}
+		
+		Thread reduceThread = new Thread() {
+			public void run() {
+				System.out.print("Entered reduce thread");
+
+				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
+					try{
+						context.reduce(entry.getKey(), entry.getValue(), context);
+					}
+					catch(IOException e){
+						System.out.print("cannot reduce");
+					}
+					//wait for completion
+				}
+
+				//peer creates a page(guid) with BReduce
+				//insert page into fileName_reduce : append file
+			}
+		};
+		
+		reduceThread.start();
 	}
 
-	public void mapContext(Long page, MapReduceInterface mapper, Context context) throws RemoteException{
-		//TODO
-		//open page
-		//read line by line
-		//execute mapper.map(key,value,context)
-		//once read, context.completePeer(page, n)
-		//create new thread
+	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException{
+		// Context is the current context
+		Thread mapThread = new Thread() {
+			public void run() {
+                String fileName = "temp.txt";
+                int n = 0;
+				System.out.print("Entered map thread");
+				try {
+                    FileOutputStream output = new FileOutputStream(fileName)
+					//setWorkingPeer(page);
+                    setWorkingPeer(page);
+					//find file with page title
+					//open page(guid)
+                    // ChordMessageInterface peer = this.locateSuccessor(page);
+                    InputStream fstream = this.get(page);
+                    // while(fstream.available()>0)
+                    //     output.write(fstream.read());
+                    // output.close();
+                    Scanner scan = new Scanner(fstream);
+                    while(scan.hasNextLine()){
+                        mapLine(scan.nextLine(), context);
+                        n++;
+                    }
+					fstream.close();
+                    scan.close();
+					context.completePeer(page, n); //
+				} catch(IOException e){
+					System.out.println("Set working peer threw an IO exceptions");
+				} 
+				//	catch (InterruptedException e) {
+				//	System.out.println("Sleep was interupted");
+				//}
+			}
+		};
+		
+		mapThread.start();
 	}
 
     public void emitMap(Long key, String value) throws RemoteException
     {
-    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
     	{
     	// insert in the BMap. Allows repetition
-    		if (BMap.containsKey(key))
+    		if (!BMap.containsKey(key))
     		{
-    			List< String > list = new List< String >();
+    			LinkedList< String > list = new LinkedList< String >();
 				BMap.put(key,list);
 			} 
-			BMap.put(key).add(value);
+			BMap.get(key).add(value);
 		}
 		else
 		{
@@ -346,12 +397,12 @@ Long n = 0;
 		}
 }
 
-	public void emitReduce(Long page, String value) throws RemoteException
+	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
-		if (isKeyInOpenInterval(key, predecessor.getId(), successor.id()))
+		if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
 		{
-			// innsert in the BReduce
-			BReduce(key, value);
+			// insert in the BReduce
+			BReduce.put(key, value);
 		} 
 		else
 		{
@@ -360,14 +411,17 @@ Long n = 0;
 		}
 	}
 
-	public void map(Long key, String value) throws IOException {
-		//for each word in value
-		emit(md5(word),word+":"+1);
+	public void map(Long key, String value, ChordMessageInterface context) throws IOException {
+		context.emitMap(key,value);
 	}
 
-	public void reduce(Long key, String values[]) throws IOException {
-		word = values[0].split(":")[0];
-		emit(key, word + ":" + values.length);
+	public void reduce(Long key, LinkedList<String> values, ChordMessageInterface context) throws IOException {
+		String word = values.get(0);
+		context.emitReduce(key, word + ":" + values.size());
 	}
 
+    public void mapLine(String line, ChordMessageInterface context){
+        String[] kvPair = line.split(":");
+        map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
+    }
 }

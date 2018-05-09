@@ -59,8 +59,9 @@ import com.google.gson.JsonParseException;
 public class DFS {
     int port;
     Chord chord;
+    public static final String METADATA = "Metadata";
 
-    private long md5(String objectName) {
+    public static long md5(String objectName) {
         try {
             MessageDigest m = MessageDigest.getInstance("MD5");
             m.reset();
@@ -103,7 +104,7 @@ public class DFS {
     {
         ChordMessageInterface peer = null;
         InputStream mdRaw = null;
-        long guid = md5("Metadata");
+        long guid = md5(METADATA);
         Metadata m = null;
 
         try {
@@ -136,7 +137,7 @@ public class DFS {
     public void writeMetaData(Metadata metadata) {
         Gson gson = new GsonBuilder().create();
         FileWriter  writer = null;
-        long guid = md5("Metadata");
+        long guid = md5(METADATA);
         InputStream mdRaw = null;
         Metadata m = new Metadata();
         ChordMessageInterface peer = null;
@@ -269,7 +270,10 @@ public class DFS {
         int pageNumber = 0;
         Page p = null;
         InputStream iStream = null;
+        ChordMessageInterface peer = null;
 
+
+        // Take input from user
         System.out.print("Type in the file name: ");
         if (in.hasNext()) {
             filename = in.next();
@@ -292,7 +296,8 @@ public class DFS {
                     LinkedList<Page> pgs = file.getPage();
                     p = pgs.get(pageNumber);
                     System.out.println(p.toString());
-                    iStream = chord.get(p.getGuid());
+                    peer = chord.locateSuccessor(p.getGuid());
+                    iStream = peer.get(p.getGuid());
                     return iStream;
                 }
             }
@@ -367,6 +372,7 @@ public class DFS {
         mFile fileToAppend = null;
         long guid = 0;
         FileStream fStream = null;
+        ChordMessageInterface peer = null;
 
         // Prompt user for file name
         System.out.print("Enter File to append to: ");
@@ -399,6 +405,7 @@ public class DFS {
             fStream = new FileStream(filepath);
             guid = md5(filepath);
             pg.setGuid(guid);
+            peer = chord.locateSuccessor(guid);
             pg.setSize(fStream.getSize());
             pg.setNumber(fileToAppend.getPage().size());
         } catch (FileNotFoundException e){
@@ -415,8 +422,61 @@ public class DFS {
 
         //Add Files to DFS and write updated metadata back to the authoritative index
         writeMetaData(md);
-        chord.put(guid, fStream); 
+        peer.put(guid, fStream); 
         System.out.print("File was successfully written.");    
     }
 
+    public void runMapReduce() throws RemoteException{
+        Scanner in = new Scanner(System.in);
+        Metadata metaData = readMetaData();
+        String fileName = "";
+        LinkedList<mFile> files;
+        mFile originalFile = new mFile();
+        Boolean fileFoundFlag = false; 
+        InputStream mapFile = null;
+        ChordMessageInterface peer = null;
+        
+        // Take input from the user
+        System.out.print("Which file will you like to count?");
+        if(in.hasNext()){
+           fileName = in.nextLine();
+        }
+        
+        // Search for the file linearly
+        files = metaData.getFile();
+        for(mFile f: files){
+            if(f.getName().equals(fileName)){
+            	System.out.print("File was found!");
+                fileFoundFlag = true;
+                originalFile = f;
+            }
+        }
+        
+        // If not found report to user
+        if(!fileFoundFlag){
+            System.out.print("File was not found.");
+            return;
+        }
+        
+        //Mapper mapper = new Mapper();
+        
+        for(Page p : originalFile.getPage()){
+        	long pageGuid = p.getGuid();
+        	
+        	try{
+        		peer = chord.locateSuccessor(pageGuid);
+        		peer.mapContext(p.getGuid(), chord); /// in while
+        	
+        		//while(!chord.isPhaseCompleted()) {
+        			// Wait
+        		//	Thread.sleep(1000);
+        		//}
+        		
+        		chord.reduceContext(chord.getId(), chord);
+        		
+        	} catch(Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+    }
 }
