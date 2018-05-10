@@ -22,6 +22,17 @@ public class mFile implements Serializable{
         size = 0;
         page = new LinkedList<Page>();
     }
+    
+    /**
+ 	* Given a file name constructs a metadata instance with that filename
+ 	*/
+    mFile(String filename) {
+        name = filename;
+        numberOfPages = 0;
+        pageSize = 0;
+        size = 0;
+        page = new LinkedList<Page>();
+    }
 
     /**
  	* Constructs a DFS instance with info
