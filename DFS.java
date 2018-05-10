@@ -386,14 +386,7 @@ public class DFS {
         FileStream fStream = null;
         ChordMessageInterface peer = null;
 
-//        // Prompt user for file name
-//        String filename = "";
-//        Scanner in = new Scanner(System.in);
-        
-//        System.out.print("Enter File to append to: ");
-//        if (in.hasNext()) {
-//            filename = in.nextLine();
-//        }
+
 
         // Search for the file linearly
         mFile fileToAppend = findLogicalFile(files, filename);
@@ -402,12 +395,6 @@ public class DFS {
         	System.out.print("The file was not found.");
             return;
         }
-
-        // Prompt user to enter the path of the file you want to append
-//        System.out.print("Enter path to the file you want to append: ");
-//        if (in.hasNext()) {
-//            filepath = in.nextLine();
-//        }
         
         // Read in the data that will be appended
         try{

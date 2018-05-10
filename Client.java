@@ -44,7 +44,7 @@ public class Client {
             System.out.print("Type in an option number: ");
 
             if (in.hasNextInt()) {
-                input = in.nextInt();
+                input = Integer.parseInt(in.nextLine());
 
                 switch (input) {
                 case 1:
