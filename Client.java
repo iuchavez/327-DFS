@@ -70,23 +70,21 @@ public class Client {
                     dfs.head(in);
                     break;
                 case 8:
-                	// Prompt user for file name
-					String filename = "";
-					String filepath = "";
-					  
 					// Prompt user to enter the filename you want to append to
+					String logicalFileAppendedTo = "";
 					System.out.print("Enter File to append to: ");
 					if (in.hasNext()) {
-						filename = in.nextLine();
+						logicalFileAppendedTo = in.nextLine();
 					}
 					  
 					// Prompt user to enter the path of the file you want to append
+					String physicalFileToAppend = "";
 					System.out.print("Enter path to the file you want to append: ");
 					if (in.hasNext()) {
-						filepath = in.nextLine();
+						physicalFileToAppend = in.nextLine();
 					}
 	            	
-                    dfs.append(filename, filepath);
+                    dfs.append(logicalFileAppendedTo, physicalFileToAppend);
                     break;
                 case 9:
                     dfs.mv(in);
