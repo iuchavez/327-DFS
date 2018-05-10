@@ -54,7 +54,12 @@ public class Client {
                     dfs.ls();
                     break;
                 case 3:
-                    dfs.touch();
+                    System.out.print("Type in the file name: ");
+                    String newFileName = "";
+                    if (in.hasNext()) {
+                    	newFileName = in.nextLine();
+                    }
+                    dfs.touch(newFileName);
                     break;
                 case 4:
                     dfs.delete();
