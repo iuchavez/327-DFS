@@ -409,6 +409,7 @@ public class DFS {
 		Scanner in = new Scanner(System.in);
 		Metadata metaData = readMetaData();
 		String fileName = "";
+		String newFileName = "";
 		LinkedList<mFile> files;
 		mFile originalFile = new mFile();
 		Boolean fileFoundFlag = false;
@@ -426,6 +427,8 @@ public class DFS {
 		for (mFile f : files) {
 			if (f.getName().equals(fileName)) {
 				System.out.print("File was found!");
+				newFileName = fileName + "_reduce";
+				dfs.touch(newFileName);
 				fileFoundFlag = true;
 				originalFile = f;
 			}
@@ -471,8 +474,6 @@ public class DFS {
 			e.printStackTrace();
 		}
 
-		// Output
-		// touch
 		// Create a new logical file (touch) with the pages as the output of reduce
 	}
 }

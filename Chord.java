@@ -330,7 +330,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 					catch(IOException e){
 						System.out.print("cannot reduce");
 					}
-					//wait for completion
 				}
 
 				//peer creates a page(guid) with BReduce
