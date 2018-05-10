@@ -192,36 +192,73 @@ public class DFS {
         System.out.println(listOfFiles);
     }
 
-    public void touch() throws Exception {
-        Scanner in = new Scanner(System.in);
-        Metadata md = readMetaData();
-        LinkedList<mFile> files = null;
-        
-        String filename = "";
-        
-        // Take input from the user for file name
-        System.out.print("Type in the file name: ");
-        if (in.hasNext()) {
-            filename = in.nextLine();
-        }
+/**
+ * This is a simplified version of the touch method, it takes in a file name and writes a new logical file to the official Metadata
+ * @param filename is the desired name of the new logical file
+ * @throws Exception
+ */
+public void touch(String filename) throws Exception {
+	// Create a file with the given filename
+	mFile aFile = new mFile(filename);
 
-        // this appears to be test code only.
-        files = md.getFile();
-        for(int i = 0; i<files.size(); i++){
-            System.out.println(files.get(i).toString());
-        }
+	// Retrieve Metadata
+    Metadata metaData = readMetaData();
+    metaData.addFile(aFile);
 
-        // 
-        mFile aFile = new mFile();
-        aFile.setName(filename);
-        System.out.println(aFile.toString());
-        files.add(aFile);
-        md.setFile(files);
+    // write it back into the official Metadata
+    writeMetaData(metaData);
+}
 
-        writeMetaData(md);
-    }
+    /**
+	    * This method is intended to add data to the DFS and to associate that data
+	    * to a file.
+	    **/
+	    public void append(String filename, String filepath) throws Exception {
+	        
+	//        String filepath = "";
+	        Page pg = new Page();
+	    	Metadata md = readMetaData();
+	        LinkedList<mFile> files = md.getFile();
+	        
+	        long guid = 0;
+	        FileStream fStream = null;
+	        ChordMessageInterface peer = null;
 
-    public void delete() throws Exception {
+	        // Search for the file linearly
+	        mFile fileToAppend = findLogicalFile(files, filename);
+	        if(fileToAppend == null) {
+	        	// If the file was not found then return to the calling method
+	        	System.out.print("The file was not found.");
+	            return;
+	        }
+	        
+	        // Read in the data that will be appended
+	        try{
+	            fStream = new FileStream(filepath);
+	            guid = md5(filepath);
+	            pg.setGuid(guid);
+	            peer = chord.locateSuccessor(guid);
+	            pg.setSize(fStream.getSize());
+	            pg.setNumber(fileToAppend.getPage().size());
+	        } catch (FileNotFoundException e){
+	            System.out.println("File was not found.");
+	            return;
+	        }
+	        //Grab page from metadata and append a page to the last file
+	        fileToAppend.addPage(pg);
+	
+	        //update appended file
+	        fileToAppend.setNumberOfPages(fileToAppend.getNumberOfPages() + 1);
+	        fileToAppend.setPageSize(fileToAppend.getSize());
+	        fileToAppend.setSize(fileToAppend.getSize()+pg.getSize());
+	
+	        //Add Files to DFS and write updated metadata back to the authoritative index
+	        writeMetaData(md);
+	        peer.put(guid, fStream); 
+	        System.out.print("File was successfully written.");    
+	    }
+
+	public void delete() throws Exception {
         Scanner in = new Scanner(System.in);
         String filename = "";
         ChordMessageInterface peer = null;
@@ -369,57 +406,6 @@ public class DFS {
             }
         }
     	return null;
-    }
-
-    /**
-    * This method is intended to add data to the DFS and to associate that data
-    * to a file.
-    **/
-    public void append(String filename, String filepath) throws Exception {
-        
-//        String filepath = "";
-        Page pg = new Page();
-    	Metadata md = readMetaData();
-        LinkedList<mFile> files = md.getFile();
-        
-        long guid = 0;
-        FileStream fStream = null;
-        ChordMessageInterface peer = null;
-
-
-
-        // Search for the file linearly
-        mFile fileToAppend = findLogicalFile(files, filename);
-        if(fileToAppend == null) {
-        	// If the file was not found then return to the calling method
-        	System.out.print("The file was not found.");
-            return;
-        }
-        
-        // Read in the data that will be appended
-        try{
-            fStream = new FileStream(filepath);
-            guid = md5(filepath);
-            pg.setGuid(guid);
-            peer = chord.locateSuccessor(guid);
-            pg.setSize(fStream.getSize());
-            pg.setNumber(fileToAppend.getPage().size());
-        } catch (FileNotFoundException e){
-            System.out.println("File was not found.");
-            return;
-        }
-        //Grab page from metadata and append a page to the last file
-        fileToAppend.addPage(pg);
-
-        //update appended file
-        fileToAppend.setNumberOfPages(fileToAppend.getNumberOfPages() + 1);
-        fileToAppend.setPageSize(fileToAppend.getSize());
-        fileToAppend.setSize(fileToAppend.getSize()+pg.getSize());
-
-        //Add Files to DFS and write updated metadata back to the authoritative index
-        writeMetaData(md);
-        peer.put(guid, fStream); 
-        System.out.print("File was successfully written.");    
     }
 
     public void runMapReduce() throws RemoteException{
