@@ -313,9 +313,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 	}
 
-	public void reduceContext(Long source, ChordMessageInterface context) throws RemoteException{
+	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer) throws RemoteException{
 		if(source != this.guid) {
-			successor.reduceContext(source, context);
+			successor.reduceContext(source, context, reducer);
 		}
 		
 		Thread reduceThread = new Thread() {
@@ -325,7 +325,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
 					try{
-						context.reduce(entry.getKey(), entry.getValue(), context);
+						reducer.reduce(entry.getKey(), entry.getValue(), context);
 					}
 					catch(IOException e){
 						System.out.print("cannot reduce");
@@ -340,8 +340,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		
 		reduceThread.start();
 	}
+	
+//	create a remote method that accepts the DFS , make is serializable and then pass it, and pass the file name
 
-	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException{
+	public void mapContext(Long page, ChordMessageInterface context, MapReduceInterface mapper) throws RemoteException{
 		// Context is the current context
 		Thread mapThread = new Thread() {
 			@Override
@@ -361,18 +363,20 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                     // output.close();
                     Scanner scan = new Scanner(fstream);
                     while(scan.hasNextLine()){
-                        mapLine(scan.nextLine(), context);
+                        mapLine(scan.nextLine(), context, mapper);
                         ++n;
                     }
 					fstream.close();
                     scan.close();
 					context.completePeer(page, n); //
+					System.out.print("MapContext Complete: " + page);
 				} catch(IOException e){
 					System.out.println("Set working peer threw an IO exceptions");
 				} 
 				//	catch (InterruptedException e) {
 				//	System.out.println("Sleep was interupted");
 				//}
+				
 			}
 		};
 		
@@ -418,18 +422,18 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		}
 	}
 
-	public void map(Long key, String value, ChordMessageInterface context) throws IOException {
-		context.emitMap(key,value);
-	}
+//	public void map(Long key, String value, ChordMessageInterface context) throws IOException {
+//		context.emitMap(key,value);
+//	}
+//
+//	public void reduce(Long key, LinkedList<String> values, ChordMessageInterface context) throws IOException {
+//		String word = values.get(0);
+//		context.emitReduce(key, word + ":" + values.size());
+//	}
 
-	public void reduce(Long key, LinkedList<String> values, ChordMessageInterface context) throws IOException {
-		String word = values.get(0);
-		context.emitReduce(key, word + ":" + values.size());
-	}
-
-    public void mapLine(String line, ChordMessageInterface context) throws IOException{
+    public void mapLine(String line, ChordMessageInterface context, MapReduceInterface mapper) throws IOException{
     	System.out.println(line);
     	String[] kvPair = line.split(";");
-        map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
+        mapper.map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
     }
 }

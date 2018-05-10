@@ -20,15 +20,15 @@ public interface ChordMessageInterface extends Remote
     public void setWorkingPeer(Long page) throws IOException;
 	public void completePeer(Long page, Long n) throws RemoteException;
     public boolean isPhaseCompleted() throws IOException;
-    public void reduceContext(Long source, ChordMessageInterface context) throws RemoteException;
-	public void mapContext(Long page, ChordMessageInterface context) throws RemoteException;
+    public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer) throws RemoteException;
+	public void mapContext(Long page, ChordMessageInterface context, MapReduceInterface mapper) throws RemoteException;
 
 	public void emitMap(Long key, String value) throws RemoteException;
 	public void emitReduce(Long page, String value) throws RemoteException;
 
-	//Mapper interface functions
-	public void map(Long key, String value,
-		ChordMessageInterface context) throws IOException;
-	public void reduce(Long key, LinkedList<String> values,
-		ChordMessageInterface context) throws IOException;
+//	//Mapper interface functions
+//	public void map(Long key, String value,
+//		ChordMessageInterface context) throws IOException;
+//	public void reduce(Long key, LinkedList<String> values,
+//		ChordMessageInterface context) throws IOException;
 }

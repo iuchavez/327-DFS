@@ -4,7 +4,7 @@ import java.util.LinkedList;
 /**
  * Currently the map and reduce methods are intended to count the words in a file
  */
-public class Mapper implements MapReduceInterface {
+public class Mapper implements MapReduceInterface, Serializable {
 
     /**
      * //TODO

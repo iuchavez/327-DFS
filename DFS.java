@@ -458,25 +458,42 @@ public class DFS {
             return;
         }
         
-        //Mapper mapper = new Mapper();
+        Mapper mapper = new Mapper();
         
         for(Page p : originalFile.getPage()){
         	long pageGuid = p.getGuid();
         	
         	try{
+        		// Seperate the Mapper class again
         		peer = chord.locateSuccessor(pageGuid);
-        		peer.mapContext(p.getGuid(), chord); /// in while
-        	
-        		Thread.sleep(1000);
-        		while(!chord.isPhaseCompleted()) {
-        			Thread.sleep(1000);
-        		}
-        		
-        		chord.reduceContext(chord.getId(), chord);
-        		
+        		peer.mapContext(p.getGuid(), chord, mapper); /// in while
         	} catch(Exception e) {
         		e.printStackTrace();
         	}
         }
+        
+        System.out.print("Waiting for Sync");
+        try {
+    		while(!chord.isPhaseCompleted()) {
+    			Thread.sleep(1000);
+    		}
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        System.out.print("Ready for the reduce Phase");
+        
+		chord.reduceContext(chord.getId(), chord, mapper);
+		
+        try {
+    		while(!chord.isPhaseCompleted()) {
+    			Thread.sleep(1000);
+    		}
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        // Output
+        // touch
+        // Create a new logical file (touch) with the pages as the output of reduce
     }
 }
