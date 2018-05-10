@@ -13,7 +13,7 @@ public class Mapper implements MapReduceInterface, Serializable {
      * emit(md5(word), word +":"+1);
      */
     //TODO: CONTEXT
-    public void map(Long key, String value, ChordMessageInterface context) throws IOException {
+    public void map(Long key, String value, ChordMessageInterface context) throws IOException { 
     	context.emitMap(key, value);
     }
 

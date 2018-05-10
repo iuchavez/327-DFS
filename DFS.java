@@ -415,7 +415,7 @@ public class DFS {
 		Boolean fileFoundFlag = false;
 		InputStream mapFile = null;
 		ChordMessageInterface peer = null;
-
+        
 		// Take input from the user
 		System.out.print("Which file will you like to count?");
 		if (in.hasNext()) {
@@ -448,7 +448,7 @@ public class DFS {
 			try {
 				// Seperate the Mapper class again
 				peer = chord.locateSuccessor(pageGuid);
-				peer.mapContext(p.getGuid(), chord, mapper); /// in while
+				peer.mapContext(p.getGuid(), chord, mapper, this); /// in while
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -476,4 +476,5 @@ public class DFS {
 
 		// Create a new logical file (touch) with the pages as the output of reduce
 	}
+    
 }

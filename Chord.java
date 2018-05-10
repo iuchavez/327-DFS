@@ -139,7 +139,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         int i;
         successor = this;
         for (i = 0;  i< M; i++)
-        {
+        {   
             try
             {
                 if (finger[i].isAlive())
@@ -313,7 +313,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 	}
 
-	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer) throws RemoteException{
+	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs) throws RemoteException{
 		if(source != this.guid) {
 			successor.reduceContext(source, context, reducer);
 		}
@@ -331,7 +331,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 						System.out.print("cannot reduce");
 					}
 				}
-
+                
 				//peer creates a page(guid) with BReduce
 				//insert page into fileName_reduce : append file
 			}
