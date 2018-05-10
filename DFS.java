@@ -356,49 +356,58 @@ public class DFS {
 
         return null;
     }
+    
+    /**
+     * Takes in a file name, searches in the linked list and then returns that logical file
+     * @param filename
+     * @return
+     */
+    public mFile findLogicalFile(LinkedList<mFile> files, String filename) {
+        for(mFile f: files){
+            if(f.getName().equals(filename)){
+                return f;
+            }
+        }
+    	return null;
+    }
 
     /**
     * This method is intended to add data to the DFS and to associate that data
     * to a file.
     **/
-    public void append() throws Exception {
-        Scanner in = new Scanner(System.in);
-        String filepath = "";
-        String filename = "";
-        Metadata md = readMetaData();
-        LinkedList<mFile> files = md.getFile();
+    public void append(String filename, String filepath) throws Exception {
+        
+//        String filepath = "";
         Page pg = new Page();
-        boolean found = false;
-        mFile fileToAppend = null;
+    	Metadata md = readMetaData();
+        LinkedList<mFile> files = md.getFile();
+        
         long guid = 0;
         FileStream fStream = null;
         ChordMessageInterface peer = null;
 
-        // Prompt user for file name
-        System.out.print("Enter File to append to: ");
-        if (in.hasNext()) {
-            filename = in.nextLine();
-        }
+//        // Prompt user for file name
+//        String filename = "";
+//        Scanner in = new Scanner(System.in);
+        
+//        System.out.print("Enter File to append to: ");
+//        if (in.hasNext()) {
+//            filename = in.nextLine();
+//        }
 
         // Search for the file linearly
-        for(mFile f: files){
-            if(f.getName().equals(filename)){
-                found = true;
-                fileToAppend = f;
-            }
-        }
-
-        // If the file was not found then return to the calling method
-        if(!found){
-            System.out.print("The file was not found.");
+        mFile fileToAppend = findLogicalFile(files, filename);
+        if(fileToAppend == null) {
+        	// If the file was not found then return to the calling method
+        	System.out.print("The file was not found.");
             return;
         }
 
         // Prompt user to enter the path of the file you want to append
-        System.out.print("Enter path to the file you want to append: ");
-        if (in.hasNext()) {
-            filepath = in.nextLine();
-        }
+//        System.out.print("Enter path to the file you want to append: ");
+//        if (in.hasNext()) {
+//            filepath = in.nextLine();
+//        }
         
         // Read in the data that will be appended
         try{

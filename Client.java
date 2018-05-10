@@ -70,7 +70,23 @@ public class Client {
                     dfs.head(in);
                     break;
                 case 8:
-                    dfs.append();
+                	// Prompt user for file name
+					String filename = "";
+					String filepath = "";
+					  
+					// Prompt user to enter the filename you want to append to
+					System.out.print("Enter File to append to: ");
+					if (in.hasNext()) {
+						filename = in.nextLine();
+					}
+					  
+					// Prompt user to enter the path of the file you want to append
+					System.out.print("Enter path to the file you want to append: ");
+					if (in.hasNext()) {
+						filepath = in.nextLine();
+					}
+	            	
+                    dfs.append(filename, filepath);
                     break;
                 case 9:
                     dfs.mv(in);
