@@ -21,6 +21,14 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     Long n = 0l;
 	Set<Long> set = new HashSet<Long>();
     
+	/**
+	 * Getter for the Reduce Tree for use in other Classes
+	 * @return The Tree containinf all the reduced Keys and Values
+	 */
+	public TreeMap<Long, LinkedList<String>> getReduceTree(){
+		return BMap;
+	}
+	
     public Boolean isKeyInSemiCloseInterval(long key, long key1, long key2)
     {
        if (key1 < key2)
@@ -315,7 +323,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs) throws RemoteException{
 		if(source != this.guid) {
-			successor.reduceContext(source, context, reducer);
+			successor.reduceContext(source, context, reducer, dfs);
 		}
 		
 		Thread reduceThread = new Thread() {
