@@ -30,7 +30,7 @@ public class Metadata implements Serializable{
  	* Returns file
  	* @return file
  	*/
-    LinkedList<mFile> getFile(){ return file; }
+    LinkedList<mFile> getFiles(){ return file; }
 
     /**
  	* Sets file in metadata
