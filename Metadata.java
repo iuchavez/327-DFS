@@ -41,7 +41,10 @@ public class Metadata implements Serializable{
 	/**
 	 * Adds a file to the file linked list
 	 */
-	void addFile(mFile tFile){ file.add(tFile); }
+	public Metadata addFile(mFile tFile){ 
+		file.add(tFile); 
+		return this;
+	}
 
 	void removeFile(mFile tFile){file.remove(tFile);}
 
