@@ -321,9 +321,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 	}
 
-	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer) throws RemoteException{
+	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs) throws RemoteException{
 		if(source != this.guid) {
-			successor.reduceContext(source, context, reducer);
+			successor.reduceContext(source, context, reducer, dfs);
 		}
 		
 		Thread reduceThread = new Thread() {
