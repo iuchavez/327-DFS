@@ -378,18 +378,24 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 					//open page(guid)
                     // ChordMessageInterface peer = this.locateSuccessor(page);
                     InputStream fstream = get(page);
-                    // while(fstream.available()>0)
-                    //     output.write(fstream.read());
-                    // output.close();
-                    Scanner scan = new Scanner(fstream);
-                    while(scan.hasNextLine()){
-                        mapLine(scan.nextLine(), context, mapper);
+                    
+                    FileReader fReader = new FileReader(fstream);
+                    BufferedReader scan = new BufferedReader(new InputStreamReader(fstream));
+                    File 
+                    FileReader fReader = new FileReader();
+//                    Scanner scan = new Scanner(fstream);
+                    String line;
+                    while((line = scan.readLine()) != null){
+                        mapLine(line, context, mapper);
                         ++n;
                     }
+                    
+                    
                     System.out.println("Loop is done");
+                    
+					context.completePeer(page, n); //
 					fstream.close();
                     scan.close();
-					context.completePeer(page, n); //
 					System.out.print("MapContext Complete: " + page);
 				} catch(IOException e){
 					System.out.println("Set working peer threw an IO exceptions");
