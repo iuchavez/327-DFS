@@ -408,7 +408,6 @@ public class DFS {
 	public void runMapReduce() throws RemoteException {
 		// Declare vars
 		String fileName = "";
-		String newFileName = "";
 		LinkedList<mFile> files;
 		mFile originalFile = new mFile();
 		Boolean fileFoundFlag = false;
