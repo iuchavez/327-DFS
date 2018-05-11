@@ -467,8 +467,10 @@ public class DFS {
 		}
 		System.out.print("Ready for the reduce Phase");
 
+		// Begin to reduce
 		chord.reduceContext(chord.getId(), chord, mapper, this);
 
+		// Wait for reduce phase
 		try {
 			while (!chord.isPhaseCompleted()) {
 				Thread.sleep(1000);
