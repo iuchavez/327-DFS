@@ -307,7 +307,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs, String filename) throws RemoteException{
 		if(source != this.guid) {
-			successor.reduceContext(source, context, reducer, dfs);
+			successor.reduceContext(source, context, reducer, dfs, filename);
 		}
 		
 		Thread reduceThread = new Thread() {
@@ -323,20 +323,28 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 						System.out.print("cannot reduce");
 					}
 				}
+
+				String tempFileName = "tempFile.txt";
+                try{
+                	dfs.touch(tempFileName); //adds in logical file to DFS
+                	FileWriter temp = new FileWriter(tempFileName); //creates literal file
                 
-                String tempFileName = "tempFile.txt";
-                dfs.touch(tempFileName); //adds in logical file to DFS
-                FileWriter temp = new FileWriter(tempFileName); //creates literal file
-                
-                //add BReduce objects into literal temp file
-                for(Map.Entry<Long, String> entry: BReduce.entrySet()){
-                    temp.write(BReduce.getKey() + ";" + BReduce.getValue);
-                }
-                temp.flush();
-                temp.close();
-				
+                	//add BReduce objects into literal temp file
+                	for(Map.Entry<Long, String> entry: BReduce.entrySet()){
+                	    temp.write(entry.getKey() + ";" + entry.getValue());
+                	}
+                	temp.flush();
+                	temp.close();
+				}catch(IOException e){
+					System.out.println("FileWriter error");
+				}
                 //filename should have fileName_reduce
-                dfs.append(filename, tempFileName);
+                try{
+                	dfs.append(filename, tempFileName);
+            	}
+            	catch(Exception e){
+            		System.out.println("append error");
+            	}
 			}
 		};
 		
@@ -359,10 +367,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                     // ChordMessageInterface peer = this.locateSuccessor(page);
                     InputStream fstream = get(page);
                     
-                    FileReader fReader = new FileReader(fstream);
+                    //FileReader fReader = new FileReader(fstream);
                     BufferedReader scan = new BufferedReader(new InputStreamReader(fstream));
-                    File 
-                    FileReader fReader = new FileReader();
+                    //File 
+                    //FileReader fReader = new FileReader();
 //                    Scanner scan = new Scanner(fstream);
                     String line;
                     while((line = scan.readLine()) != null){
