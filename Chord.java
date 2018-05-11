@@ -327,11 +327,13 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 				String tempFileName = "tempFile.txt";
                 try{
                 	dfs.touch(tempFileName); //adds in logical file to DFS
-                	FileWriter temp = new FileWriter(tempFileName); //creates literal file
+                	File tempFile = new File(tempFileName); //creates literal file
+                	FileWriter temp = new FileWriter(tempFile);
                 
                 	//add BReduce objects into literal temp file
                 	for(Map.Entry<Long, String> entry: BReduce.entrySet()){
                 	    temp.write(entry.getKey() + ";" + entry.getValue());
+                	    temp.write(System.lineSeparator());
                 	}
                 	temp.flush();
                 	temp.close();
