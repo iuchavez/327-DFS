@@ -306,10 +306,12 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 
 	public void setWorkingPeer(Long page) throws IOException { 
-        set.add(page); 
+        System.out.println("Added a peer");
+		set.add(page); 
     } 
 
 	public void completePeer(Long page, Long n) throws RemoteException {
+		System.out.println("Removed a peer");
 		this.n += n;
 		set.remove(page);
 	}
@@ -373,6 +375,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                         mapLine(scan.nextLine(), context, mapper);
                         ++n;
                     }
+                    System.out.println("Loop is done");
 					fstream.close();
                     scan.close();
 					context.completePeer(page, n); //
