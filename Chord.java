@@ -347,6 +347,17 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			}
 		};
 		
+//		File reducedFile = new File();
+		try {
+			FileWriter fWriter = new FileWriter("reducedFile"+"_"+guid);
+			fWriter.write("This is just a test");
+			fWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		reduceThread.start();
 	}
 	
