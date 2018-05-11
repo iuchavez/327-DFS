@@ -197,7 +197,7 @@ public class DFS {
 	 *            is the desired name of the new logical file
 	 * @throws Exception
 	 */
-	public void touch(String filename) throws Exception {
+	public void touch(String filename) {
 		// Create a file with the given filename
 		mFile aFile = new mFile(filename);
 
@@ -406,23 +406,24 @@ public class DFS {
 	}
 
 	public void runMapReduce() throws RemoteException {
-		Scanner in = new Scanner(System.in);
-		Metadata metaData = readMetaData();
+		// Declare vars
 		String fileName = "";
 		String newFileName = "";
 		LinkedList<mFile> files;
 		mFile originalFile = new mFile();
 		Boolean fileFoundFlag = false;
-		InputStream mapFile = null;
 		ChordMessageInterface peer = null;
         
 		// Take input from the user
+		Scanner in = new Scanner(System.in);
 		System.out.print("Which file will you like to count?");
 		if (in.hasNext()) {
 			fileName = in.nextLine();
 		}
 
 		// Search for the file linearly
+		String reducedFileName = "";
+		Metadata metaData = readMetaData();
 		files = metaData.getFiles();
 		for (mFile f : files) {
 			if (f.getName().equals(fileName)) {
@@ -434,29 +435,31 @@ public class DFS {
 			}
 		}
 
-		// If not found report to user
+		// If file not found report to user
 		if (!fileFoundFlag) {
 			System.out.print("File was not found.");
 			return;
 		}
 
+		// Go through every page in the file and map it
 		Mapper mapper = new Mapper();
-
 		for (Page p : originalFile.getPage()) {
 			long pageGuid = p.getGuid();
 
 			try {
 				// Seperate the Mapper class again
 				peer = chord.locateSuccessor(pageGuid);
-				peer.mapContext(p.getGuid(), chord, mapper, this); /// in while
+				peer.mapContext(p.getGuid(), chord, mapper); /// in while
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
+		// Wait for the items to get mapped
 		System.out.print("Waiting for Sync");
 		try {
 			while (!chord.isPhaseCompleted()) {
+				//System.out.println("Negated isPhaseComplete()" + !chord.isPhaseCompleted());
 				Thread.sleep(1000);
 			}
 		} catch (Exception e) {
