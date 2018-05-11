@@ -288,23 +288,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         }
     }
 
-//	//does map reduce on page    
-//	public void runMapReduce(InputStream file, mFile f){ // may not be inputstream
-//		Context context = new Context();
-// 		Mapper mapreduce = new Mapper();
-//
-//		//do{
-// 		//	for(Page p: f.getPage()){
-// 		//		context.add(p);
-// 		//		ChordMessageInterface peer = null; // process to store page, might need to instantiate this with something
-// 		//		peer.mapContext(p.getGuid());
-// 		//		if(context.isPhaseCompleted())
-// 		//			reduceContext(this.guid, mapreduce, context);
-// 		//	}
-// 		//}while(!context.isPhaseCompleted());
-//	}
-
-
 	public void setWorkingPeer(Long page) throws IOException { 
         System.out.println("Added a peer");
 		set.add(page); 
@@ -320,10 +303,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		if(set == null)
 			return false;
 		return set.isEmpty();
-
 	}
 
-	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs) throws RemoteException{
+	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs, String filename) throws RemoteException{
 		if(source != this.guid) {
 			successor.reduceContext(source, context, reducer, dfs);
 		}
@@ -342,8 +324,19 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 					}
 				}
                 
-				//peer creates a page(guid) with BReduce
-				//insert page into fileName_reduce : append file
+                String tempFileName = "tempFile.txt";
+                dfs.touch(tempFileName); //adds in logical file to DFS
+                FileWriter temp = new FileWriter(tempFileName); //creates literal file
+                
+                //add BReduce objects into literal temp file
+                for(Map.Entry<Long, String> entry: BReduce.entrySet()){
+                    temp.write(BReduce.getKey() + ";" + BReduce.getValue);
+                }
+                temp.flush();
+                temp.close();
+				
+                //filename should have fileName_reduce
+                dfs.append(filename, tempFileName);
 			}
 		};
 		
@@ -357,8 +350,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		Thread mapThread = new Thread() {
 			@Override
 			public void run() {
-                String fileName = "temp.txt";
-                Long n = 0l;
 				System.out.print("Entered map thread");
 				try {
 					context.setWorkingPeer(page);
@@ -437,15 +428,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			peer.emitReduce(key, value);
 		}
 	}
-
-//	public void map(Long key, String value, ChordMessageInterface context) throws IOException {
-//		context.emitMap(key,value);
-//	}
-//
-//	public void reduce(Long key, LinkedList<String> values, ChordMessageInterface context) throws IOException {
-//		String word = values.get(0);
-//		context.emitReduce(key, word + ":" + values.size());
-//	}
 
     public void mapLine(String line, ChordMessageInterface context, MapReduceInterface mapper) throws IOException{
     	System.out.println(line);

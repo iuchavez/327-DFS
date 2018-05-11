@@ -471,7 +471,7 @@ public class DFS {
 		System.out.print("Ready for the reduce Phase");
 
 		// Begin to reduce
-		chord.reduceContext(chord.getId(), chord, mapper, this);
+		chord.reduceContext(chord.getId(), chord, mapper, this, reducedFileName);
 
 		// Wait for reduce phase
 		try {
