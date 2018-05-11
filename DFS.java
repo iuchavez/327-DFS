@@ -428,8 +428,7 @@ public class DFS {
 		for (mFile f : files) {
 			if (f.getName().equals(fileName)) {
 				System.out.print("File was found!");
-				newFileName = fileName + "_reduce";
-				dfs.touch(newFileName);
+				
 				fileFoundFlag = true;
 				originalFile = f;
 			}
@@ -465,6 +464,11 @@ public class DFS {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		// Create a reduce file in the DFS
+		reducedFileName = fileName + "_reduce";
+		touch(reducedFileName);
+		
 		System.out.print("Ready for the reduce Phase");
 
 		// Begin to reduce
