@@ -79,7 +79,9 @@ public class DFS {
 		chord = new Chord(port, guid);
 		Files.createDirectories(Paths.get(guid + "/repository"));
 	}
-
+	/**
+	 * Joins multiple nodes together. User inputs ip address and port to connect to.
+	 */
 	public void join(Scanner in) throws Exception {
 		System.out.print("Type in the IP address: ");
 		String ip = in.next();
@@ -97,7 +99,9 @@ public class DFS {
 		}
 		chord.Print();
 	}
-
+	/**
+	 * Downloads the Filesystem metadata
+	 */
 	public Metadata readMetaData() {
 		ChordMessageInterface peer = null;
 		InputStream mdRaw = null;
@@ -130,7 +134,9 @@ public class DFS {
 
 		return m;
 	}
-
+	/**
+	 * Writes local version of metadata file to the FileSystem.
+	 */
 	public void writeMetaData(Metadata metadata) {
 		Gson gson = new GsonBuilder().create();
 		FileWriter writer = null;
@@ -149,7 +155,9 @@ public class DFS {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * User inputs a file they wish to rename a logical file
+	 */
 	public void mv(Scanner in) throws Exception {
 		String oldname = "";
 		String newname = "";
@@ -173,7 +181,9 @@ public class DFS {
 
 		writeMetaData(md);
 	}
-
+	/**
+	 * List all of the logical files in the Chord File System
+	 */
 	public void ls() throws Exception {
 		String listOfFiles = "";
 		// StringBuilder loFiles = new StringBuilder();
