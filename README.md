@@ -1,7 +1,7 @@
 # 327-DFS
 The goal for this project is to develop a MapReduce framework of our Chord distributed file system.
 
-# Working Functions
+# Functions Working
 All DFS functions, including runMapReduce
 
 All initial Chord functions
@@ -12,5 +12,5 @@ reduceContext in Chord
 
 emitMap/emitReduce in Chord
 
-# Not Working Functions
+# Functions Not Working
 mapContext in Chord - cannot parse InputStream object correctly
