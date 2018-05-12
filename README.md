@@ -11,6 +11,5 @@ map/reduce functions in Mapper
 emitMap/emitReduce in Chord
 
 # Functions Incomplete
-reduceContext in Chord - does not sort lines in paage
-
-mapContext in Chord - cannot parse InputStream object correctly
+reduceContext in Chord - does not sort lines in page
+mapContext in Chord - cannot parse InputStream object correctly(Can't exit while loop)
