@@ -221,7 +221,7 @@ public class DFS {
 		mFile fileToAppend = findLogicalFile(files, filename);
 		if (fileToAppend == null) {
 			// If the file was not found then return to the calling method
-			System.out.print("The file was not found.");
+			System.out.println("The file was not found.");
 			return;
 		}
 
@@ -454,7 +454,7 @@ public class DFS {
 		}
 
 		// Wait for the items to get mapped
-		System.out.print("Waiting for Sync");
+		System.out.println("Waiting for Sync");
 		try {
 			while (!chord.isPhaseCompleted()) {
 				//System.out.println("Negated isPhaseComplete()" + !chord.isPhaseCompleted());
@@ -468,7 +468,7 @@ public class DFS {
 		reducedFileName = fileName + "_reduce";
 		touch(reducedFileName);
 		
-		System.out.print("Ready for the reduce Phase");
+		System.out.println("Ready for the reduce Phase");
 
 		// Begin to reduce
 		chord.reduceContext(chord.getId(), chord, mapper, this, reducedFileName);

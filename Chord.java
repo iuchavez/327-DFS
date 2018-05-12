@@ -4,7 +4,8 @@ import java.rmi.server.*;
 import java.net.*;
 import java.util.*;
 import java.io.*;
-
+import java.math.BigInteger;
+import java.security.*;
  
 public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordMessageInterface
 {
@@ -288,6 +289,20 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
         }
     }
 
+    public static long md5(String objectName) {
+		try {
+			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.reset();
+			m.update(objectName.getBytes());
+			BigInteger bigInt = new BigInteger(1, m.digest());
+			return Math.abs(bigInt.longValue());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+
 	public void setWorkingPeer(Long page) throws IOException { 
         System.out.println("Added a peer");
 		set.add(page); 
@@ -313,14 +328,14 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		Thread reduceThread = new Thread() {
 			@Override
 			public void run() {
-				System.out.print("Entered reduce thread");
+				System.out.println("Entered reduce thread");
 
 				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
 					try{
 						reducer.reduce(entry.getKey(), entry.getValue(), context);
 					}
 					catch(IOException e){
-						System.out.print("cannot reduce");
+						System.out.println("cannot reduce");
 					}
 				}
 
@@ -360,7 +375,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 		Thread mapThread = new Thread() {
 			@Override
 			public void run() {
-				System.out.print("Entered map thread");
+				System.out.println("Entered map thread");
 				try {
 					context.setWorkingPeer(page);
 
@@ -386,7 +401,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 					context.completePeer(page, n); //
 					fstream.close();
                     scan.close();
-					System.out.print("MapContext Complete: " + page);
+					System.out.println("MapContext Complete: " + page);
 				} catch(IOException e){
 					System.out.println("Set working peer threw an IO exceptions");
 				} 
@@ -405,6 +420,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	 */
     public void emitMap(Long key, String value) throws RemoteException
     {
+        System.out.println( successor.getId());
     	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
     	{
     	// insert in the BMap. Allows repetition
@@ -440,8 +456,8 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
     public void mapLine(String line, ChordMessageInterface context, MapReduceInterface mapper) throws IOException{
-    	System.out.println(line);
-    	String[] kvPair = line.split(";");
-        mapper.map(Long.parseLong(kvPair[0]), kvPair[kvPair.length-1], context);
+        String[] kvPair = line.split(";");
+    	// System.out.println(kvPair[0]);
+        mapper.map( md5(kvPair[kvPair.length-1]), kvPair[kvPair.length-1]+" : " + kvPair[0], context);
     }
 }
