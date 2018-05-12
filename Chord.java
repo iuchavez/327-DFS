@@ -332,13 +332,13 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
 					try{
+                        System.out.println("Entering Reducer");
                         reducer.reduce(entry.getKey(), entry.getValue(), context);
 					}
 					catch(IOException e){
                         System.out.println("cannot reduce");
 					}
 				}
-                System.out.println("Finished Reducer.reduce");
 
 				String tempFileName = "tempFile.txt";
                 try{
@@ -397,6 +397,7 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                         // System.out.println(kvPair[0]);
                         mapper.map( md5(kvPair[kvPair.length-1]), kvPair[kvPair.length-1]+" : " + kvPair[0], context);
                         n++;
+                        System.out.println(n);
                     }
                     
                     
@@ -442,7 +443,6 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                 peer.emitMap(key, value);
             }
         } else{ //This Else Logic is flawed. This is for test cases with 1 node.
-            System.out.println(key + value);
             if (!BMap.containsKey(key))
                 {
                     LinkedList< String > list = new LinkedList< String >();
