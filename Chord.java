@@ -426,55 +426,39 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     public void emitMap(Long key, String value) throws RemoteException
     {
         // System.out.println( successor.getId());
-        if(predecessor != null){
-            if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
-            {
-            // insert in the BMap. Allows repetition
-                if (!BMap.containsKey(key))
-                {
-                    LinkedList< String > list = new LinkedList< String >();
-                    BMap.put(key,list);
-                } 
-                BMap.get(key).add(value);
-            }
-            else
-            {
-                ChordMessageInterface peer = this.locateSuccessor(key);
-                peer.emitMap(key, value);
-            }
-        } else{ //This Else Logic is flawed. This is for test cases with 1 node.
+        if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
+        {
+        // insert in the BMap. Allows repetition
             if (!BMap.containsKey(key))
-                {
-                    LinkedList< String > list = new LinkedList< String >();
-                    BMap.put(key,list);
-                } 
-                BMap.get(key).add(value);
+            {
+                LinkedList< String > list = new LinkedList< String >();
+                BMap.put(key,list);
+            } 
+            BMap.get(key).add(value);
         }
-}
+        else
+        {
+            ChordMessageInterface peer = this.locateSuccessor(key);
+            peer.emitMap(key, value);
+        }
+    }
     
     /**
      * Complete
      */
 	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
-        if(predecessor != null){
-            if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
-            {
-                // insert in the BReduce
-            } 
-            else
-            {
-                ChordMessageInterface peer = this.locateSuccessor(key);
-                peer.emitReduce(key, value);
-            }
-        } else {
+        if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
+        {
+            // insert in the BReduce
             BReduce.put(key, value);
+
+        } 
+        else
+        {
+            ChordMessageInterface peer = this.locateSuccessor(key);
+            peer.emitReduce(key, value);
         }
 	}
 
-    public void mapLine(String line, ChordMessageInterface context, MapReduceInterface mapper) throws IOException{
-        String[] kvPair = line.split(";");
-    	// System.out.println(kvPair[0]);
-        mapper.map( md5(kvPair[kvPair.length-1]), kvPair[kvPair.length-1]+" : " + kvPair[0], context);
-    }
 }
