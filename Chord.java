@@ -319,7 +319,15 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 			return false;
 		return set.isEmpty();
 	}
-
+    /**
+     * Creates a thread that interates through BMap to store all K:V Pairs into separate
+     * nodes witin the BReduce TreeMap. Then creates a temporary file that has all the values of
+     * the treemap for later consumption by the DFS.Append function.
+     * 
+     * @params: source -> Coordinator's Chord guid, Context -> Coordinator Chord Object,
+     *  Reduce -> Mapper Helper Class, DFS -> Middleware Object between client and chord,
+     *  filename -> Future metadata filename when appending pages
+     */    
 	public void reduceContext(Long source, ChordMessageInterface context, MapReduceInterface reducer, DFS dfs, String filename) throws RemoteException{
 		if(source != this.guid) {
 			successor.reduceContext(source, context, reducer, dfs, filename);
@@ -421,7 +429,10 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	}
 
 	/**
-	 * Complete
+	 * Checks to see if a Key:Value pair belongs on a peer.
+     * If it does, Takes a stashes the KV into their TreeMap BMap
+     * If Not, it recursively calls succesors until it is on the right peer.
+     * @params: Key -> MD5 of the word, Value -> word : og key
 	 */
     public void emitMap(Long key, String value) throws RemoteException
     {
@@ -444,7 +455,9 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
     }
     
     /**
-     * Complete
+     * Checks to see if a Key:Value pair belongs on a peer.
+     * If it does, it will store it in said peer's TreeMap BreduceMap
+     * If not, it recusively calls successors until it is on the right peer.
      */
 	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
