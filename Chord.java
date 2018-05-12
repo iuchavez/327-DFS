@@ -332,10 +332,11 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 
 				for(Map.Entry<Long, LinkedList<String>> entry: BMap.entrySet()){
 					try{
-						reducer.reduce(entry.getKey(), entry.getValue(), context);
+                        System.out.println("Entering Reducer");
+                        reducer.reduce(entry.getKey(), entry.getValue(), context);
 					}
 					catch(IOException e){
-						System.out.println("cannot reduce");
+                        System.out.println("cannot reduce");
 					}
 				}
 
@@ -385,14 +386,18 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
                     InputStream fstream = get(page);
                     
                     //FileReader fReader = new FileReader(fstream);
-                    BufferedReader scan = new BufferedReader(new InputStreamReader(fstream));
-                    //File 
+                    // BufferedReader scan = new BufferedReader(new InputStreamReader(fstream, "UTF-8"));
+                    //(line = scan.readLine()) != null
                     //FileReader fReader = new FileReader();
-//                    Scanner scan = new Scanner(fstream);
+                   Scanner scan = new Scanner(fstream);
                     String line;
-                    while((line = scan.readLine()) != null){
-                        mapLine(line, context, mapper);
-                        ++n;
+                    while(scan.hasNextLine()){
+                        line = scan.nextLine();
+                        String[] kvPair = line.split(";");
+                        // System.out.println(kvPair[0]);
+                        mapper.map( md5(kvPair[kvPair.length-1]), kvPair[kvPair.length-1]+" : " + kvPair[0], context);
+                        n++;
+                        System.out.println(n);
                     }
                     
                     
@@ -420,22 +425,31 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
 	 */
     public void emitMap(Long key, String value) throws RemoteException
     {
-        System.out.println( successor.getId());
-    	if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
-    	{
-    	// insert in the BMap. Allows repetition
-    		if (!BMap.containsKey(key))
-    		{
-    			LinkedList< String > list = new LinkedList< String >();
-				BMap.put(key,list);
-			} 
-			BMap.get(key).add(value);
-		}
-		else
-		{
-			ChordMessageInterface peer = this.locateSuccessor(key);
-			peer.emitMap(key, value);
-		}
+        // System.out.println( successor.getId());
+        if(predecessor != null){
+            if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
+            {
+            // insert in the BMap. Allows repetition
+                if (!BMap.containsKey(key))
+                {
+                    LinkedList< String > list = new LinkedList< String >();
+                    BMap.put(key,list);
+                } 
+                BMap.get(key).add(value);
+            }
+            else
+            {
+                ChordMessageInterface peer = this.locateSuccessor(key);
+                peer.emitMap(key, value);
+            }
+        } else{ //This Else Logic is flawed. This is for test cases with 1 node.
+            if (!BMap.containsKey(key))
+                {
+                    LinkedList< String > list = new LinkedList< String >();
+                    BMap.put(key,list);
+                } 
+                BMap.get(key).add(value);
+        }
 }
     
     /**
@@ -443,16 +457,19 @@ public class Chord extends java.rmi.server.UnicastRemoteObject implements ChordM
      */
 	public void emitReduce(Long key, String value) throws RemoteException
 	{ 
-		if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
-		{
-			// insert in the BReduce
-			BReduce.put(key, value);
-		} 
-		else
-		{
-			ChordMessageInterface peer = this.locateSuccessor(key);
-			peer.emitReduce(key, value);
-		}
+        if(predecessor != null){
+            if (isKeyInOpenInterval(key, predecessor.getId(), successor.getId()))
+            {
+                // insert in the BReduce
+            } 
+            else
+            {
+                ChordMessageInterface peer = this.locateSuccessor(key);
+                peer.emitReduce(key, value);
+            }
+        } else {
+            BReduce.put(key, value);
+        }
 	}
 
     public void mapLine(String line, ChordMessageInterface context, MapReduceInterface mapper) throws IOException{
