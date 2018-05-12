@@ -14,7 +14,7 @@ public class Mapper implements MapReduceInterface, Serializable {
      */
     //TODO: CONTEXT
     public void map(Long key, String value, ChordMessageInterface context) throws IOException { 
-    	context.emitMap(key, value);
+        context.emitMap(key, value);
     }
 
     /**
